@@ -8,7 +8,15 @@ DefaultProperties
         OtherItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
-    Items[RORIGM_Campaign_Early]=Items[RORIGM_Default]
-    Items[RORIGM_Campaign_Mid]=Items[RORIGM_Default]
-    Items[RORIGM_Campaign_Late]=Items[RORIGM_Default]
+    Items[RORIGM_Campaign_Early]={(
+        OtherItems=(class'ROGame.ROItem_TunnelTool')
+    )}
+
+    Items[RORIGM_Campaign_Mid]={(
+        OtherItems=(class'ROGame.ROItem_TunnelTool')
+    )}
+
+    Items[RORIGM_Campaign_Late]={(
+        OtherItems=(class'ROGame.ROItem_TunnelTool')
+    )}
 }
