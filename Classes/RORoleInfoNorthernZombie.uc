@@ -1,1 +1,0 @@
-class RORoleInfoNorthernZombie extends RORoleInfoNorthernInfantry;

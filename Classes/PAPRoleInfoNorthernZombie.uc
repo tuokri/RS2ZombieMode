@@ -1,4 +1,4 @@
-class PAPRoleInfoNorthernCommander extends PAPRoleInfoNorthernInfantry;
+class PAPRoleInfoSouthernCommander extends PAPRoleInfoSouthernInfantry;
 
 DefaultProperties
 {

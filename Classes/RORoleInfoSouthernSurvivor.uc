@@ -1,1 +1,0 @@
-class RORoleInfoSouthernSurvivor extends RORoleInfoSouthernInfantry;

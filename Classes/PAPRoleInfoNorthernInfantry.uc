@@ -1,6 +1,9 @@
-class PAPRoleInfoNorthernInfantry extends RORoleInfoNorthernInfantry;
+class PAPRoleInfoNorthernInfantry extends RORoleInfoNorthernInfantry
+    abstract;
 
 DefaultProperties
 {
     bAllowPistolsInRealism=False
+
+    RoleRootClass=class'PAPRoleInfoNorthernInfantry'
 }
