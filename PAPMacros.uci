@@ -1,0 +1,4 @@
+`define paplog(msg, tag) class'PAPLogger'.static.PAPLog(`msg, `tag)
+
+`define NORTH_PAWN_MODIFIER_DEFAULT 1.5
+`define NORTH_PAWN_MODIFIER_MIN 0.1
