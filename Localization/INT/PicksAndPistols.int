@@ -1,3 +1,6 @@
+[PAPRoleInfo]
+MyName="UNNAMED ROLE"
+
 [PAPRoleInfoSouthernSurvivor]
 MyName="SURVIVOR"
 
@@ -9,3 +12,9 @@ MyName="PROTESTER"
 
 [PAPRoleInfoNorthernZombie]
 MyName="ZOMBIE"
+
+[PAPRoleInfoNorthernCommander]
+MyName="ZOMMANDER"
+
+[PAPRoleInfoSouthernCommander]
+MyName="LOCAL AGITATOR"

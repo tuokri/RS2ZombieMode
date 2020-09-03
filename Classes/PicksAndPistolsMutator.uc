@@ -6,116 +6,100 @@ var config float NorthGroundSpeedModifier;
 var config float NorthAccelRateModifier;
 var config float NorthMaxFallSpeedModifier;
 
-var config float NorthReinforcementDelayModifier;
-var config float SouthReinforcementDelayModifier;
-
 var RORoleInfoClasses RORICSouth;
 var RORoleInfoClasses RORICNorth;
+
+var array<RORoleCount> SouthernRolesPAP;
+var array<RORoleCount> NorthernRolesPAP;
 
 function PreBeginPlay()
 {
     `paplog("PreBeginPlay()", 'Init');
+
+    ROGameInfo(WorldInfo.Game).PlayerControllerClass = class'PAPPlayerController';
+    ROGameInfo(WorldInfo.Game).PlayerReplicationInfoClass = class'PAPPlayerReplicationInfo';
+
     VerifyConfig();
-    SaveConfig();
 }
 
 function PostBeginPlay()
 {
-    local float StartSec;
-
     `paplog("PostBeginPlay()", 'Init');
-    StartSec = WorldInfo.RealTimeSeconds;
-
-    `paplog("Waiting for ROGameInfo to initialize...", 'Init');
-    while (ROGameInfo(WorldInfo.Game) == None) {/* Wait. */}
-    `paplog("ROGameInfo initialized in " $ WorldInfo.RealTimeSeconds - StartSec $ " seconds", 'Init');
-
     ReplacePawns();
-    ModifyGameInfo();
-    ModifyMapInfo();
+    DestroyPickupFactories();
+    Fuck();
 }
 
-simulated function ReplacePawns()
+simulated function ReplaceRoles()
 {
-    ROGameInfo(WorldInfo.Game).SouthRoleContentClasses = RORICSouth;
-    ROGameInfo(WorldInfo.Game).NorthRoleContentClasses = RORICNorth;
-    `paplog("Pawns replaced", 'Init');
-}
-
-function ModifyGameInfo()
-{
-    local PickupFactory PF;
-    local int Count;
-
-    `paplog("Modifying game info", 'GameInfo');
-    foreach BasedActors(class'PickupFactory', PF)
-    {
-        // bPickupHidden = True;
-        // PF.ShutDown();
-        PF.Destroy();
-        ++Count;
-    }
-
-    if (Count > 0)
-    {
-        `paplog("Destroyed " $ Count $ " pickup factories");
-    }
-}
-
-simulated function ModifyMapInfo()
-{
-    local RORoleCount RORC;
     local ROMapInfo ROMI;
+    local RORoleCount RORC;
 
-    `paplog("Modifying map info", 'MapInfo');
     ROMI = ROMapInfo(WorldInfo.GetMapInfo());
 
-    ROMI.NorthernTeamLeader.RoleInfo = new class'PAPRoleInfoNorthernCommander';
-    // No Southern TL for now.
-    // ROMI.SouthernTeamLeader.RoleInfo = new class'PAPRoleInfoSouthernCommander';
-    ROMI.SouthernTeamLeader.RoleInfo = None;
-
     ROMI.NorthernRoles.Remove(0, ROMI.NorthernRoles.Length);
-    ROMI.SouthernRoles.Remove(0, ROMI.NorthernRoles.Length);
+    ROMI.SouthernRoles.Remove(0, ROMI.SouthernRoles.Length);
+
+    ROMI.NorthernTeamLeader.RoleInfo = new class'PAPRoleInfoNorthernCommander';
+    ROMI.SouthernTeamLeader.RoleInfo = new class'PAPRoleInfoSouthernCommander';
 
     RORC.RoleInfoClass = class'PAPRoleInfoNorthernZombie';
     RORC.Count = 255;
-    RORC.ReverseCount = 255;
     ROMI.NorthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'PAPRoleInfoSouthernSurvivor';
     RORC.Count = 255;
-    RORC.ReverseCount = 255;
     ROMI.SouthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'PAPRoleInfoSouthernFighter';
     RORC.Count = 2;
-    RORC.ReverseCount = 2;
     ROMI.SouthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'PAPRoleInfoSouthernProtester';
     RORC.Count = 2;
-    RORC.ReverseCount = 2;
     ROMI.SouthernRoles.AddItem(RORC);
-
-    ROMI.AxisReinforcementDelay16 *= NorthReinforcementDelayModifier;
-    ROMI.AxisReinforcementDelay32 *= NorthReinforcementDelayModifier;
-    ROMI.AxisReinforcementDelay64 *= NorthReinforcementDelayModifier;
-    ROMI.AlliesReinforcementDelay16 *= SouthReinforcementDelayModifier;
-    ROMI.AlliesReinforcementDelay32 *= SouthReinforcementDelayModifier;
-    ROMI.AlliesReinforcementDelay64 *= SouthReinforcementDelayModifier;
 }
 
-function float VerifyFloatModifierMin(Name ModifierName, float Modifier,
-    float MinValue, float DefaultValue)
+simulated function OverrideMapInfo()
 {
-    if (Modifier < `NORTH_PAWN_MODIFIER_MIN)
-    {
-        `paplog("WARNING: " $ ModifierName $ "(" $ Modifier $ ") is less than " $
-            MinValue $ " using default value: " $ DefaultValue, 'Config');
-        Modifier = DefaultValue;
-    }
-    return Modifier;
+    local ROMapInfo ROMI;
+
+    ROMI = ROMapInfo(WorldInfo.GetMapInfo());
+
+    /*
+    ROMI.AxisReinforcementDelay16 *= PAPPlayerController.default.NorthReinforcementDelayModifier;
+    ROMI.AxisReinforcementDelay32 *= PAPPlayerController.default.NorthReinforcementDelayModifier;
+    ROMI.AxisReinforcementDelay64 *= PAPPlayerController.default.NorthReinforcementDelayModifier;
+    ROMI.AlliesReinforcementDelay16 *= PAPPlayerController.default.SouthReinforcementDelayModifier;
+    ROMI.AlliesReinforcementDelay32 *= PAPPlayerController.default.SouthReinforcementDelayModifier;
+    ROMI.AlliesReinforcementDelay64 *= PAPPlayerController.default.SouthReinforcementDelayModifier;
+    */
+
+    ROMI.EnhancedLogisticsLimit16 = 0;
+    ROMI.EnhancedLogisticsLimit32 = 0;
+    ROMI.EnhancedLogisticsLimit64 = 0;
+    ROMI.NorthArtilleryStrikeLimit16 = 0;
+    ROMI.NorthArtilleryStrikeLimit32 = 0;
+    ROMI.NorthArtilleryStrikeLimit64 = 0;
+    ROMI.AC47GunshipStrikeLimit16 = 0;
+    ROMI.AC47GunshipStrikeLimit32 = 0;
+    ROMI.AC47GunshipStrikeLimit64 = 0;
+    ROMI.SouthArtilleryStrikeLimit16 = 0;
+    ROMI.SouthArtilleryStrikeLimit32 = 0;
+    ROMI.SouthArtilleryStrikeLimit64 = 0;
+    ROMI.NapalmStrikeLimit16 = 0;
+    ROMI.NapalmStrikeLimit32 = 0;
+    ROMI.NapalmStrikeLimit64 = 0;
+    ROMI.CarpetBomberStrikeLimit16 = 0;
+    ROMI.CarpetBomberStrikeLimit32 = 0;
+    ROMI.CarpetBomberStrikeLimit64 = 0;
+    ROMI.AntiAirCooldown = 0;
+}
+
+simulated function Fuck()
+{
+    ReplaceRoles();
+    OverrideMapInfo();
 }
 
 function VerifyConfig()
@@ -135,16 +119,46 @@ function VerifyConfig()
     NorthMaxFallSpeedModifier = VerifyFloatModifierMin(
         Nameof(NorthMaxFallSpeedModifier), NorthMaxFallSpeedModifier,
         `NORTH_PAWN_MODIFIER_MIN, `NORTH_PAWN_MODIFIER_DEFAULT);
+}
 
-    NorthReinforcementDelayModifier = VerifyFloatModifierMin(
-        Nameof(NorthReinforcementDelayModifier), NorthReinforcementDelayModifier,
-        `REINFORCEMENT_DELAY_MODIFIER_MIN, `NORTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT);
+function float VerifyFloatModifierMin(Name ModifierName, float Modifier,
+    float MinValue, float DefaultValue)
+{
+    if (Modifier < `NORTH_PAWN_MODIFIER_MIN)
+    {
+        `paplog("WARNING: " $ ModifierName $ "(" $ Modifier $ ") is less than " $
+            MinValue $ " using default value: " $ DefaultValue, 'Config');
+        Modifier = DefaultValue;
+    }
+    return Modifier;
+}
 
-    SouthReinforcementDelayModifier = VerifyFloatModifierMin(
-        Nameof(SouthReinforcementDelayModifier), SouthReinforcementDelayModifier,
-        `REINFORCEMENT_DELAY_MODIFIER_MIN, `SOUTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT);
+simulated function ReplacePawns()
+{
+    ROGameInfo(WorldInfo.Game).SouthRoleContentClasses = RORICSouth;
+    ROGameInfo(WorldInfo.Game).NorthRoleContentClasses = RORICNorth;
+    `paplog("Pawns replaced", 'Init');
+}
 
-    `paplog("Configuration verified", 'Config');
+function DestroyPickupFactories()
+{
+    local PickupFactory PF;
+    local int Count;
+
+    `paplog("Destroying pickup factories", 'Pickups');
+
+    foreach BasedActors(class'PickupFactory', PF)
+    {
+        // bPickupHidden = True;
+        // PF.ShutDown();
+        PF.Destroy();
+        ++Count;
+    }
+
+    if (Count > 0)
+    {
+        `paplog("Destroyed " $ Count $ " pickup factories", 'Pickups');
+    }
 }
 
 function ModifyNorthPlayer(out Pawn Other)
@@ -173,15 +187,6 @@ function ModifyPlayer(Pawn Other)
 {
     super.ModifyPlayer(Other);
 
-    // Just a fail-safe. Not sure if even it's possible to
-    // call ModifPlayer before PreBeginPlay.
-    /*
-    if (!bConfigVerified)
-    {
-        VerifyConfig();
-    }
-    */
-
     if (Other.GetTeamNum() == `ALLIES_TEAM_INDEX)
     {
         ModifySouthPlayer(Other);
@@ -192,15 +197,17 @@ function ModifyPlayer(Pawn Other)
     }
 }
 
+function ModifyPreLogin(string Options, string Address, out string ErrorMessage)
+{
+    ReplacePawns();
+}
+
 DefaultProperties
 {
     NorthJumpZModifier=`NORTH_PAWN_MODIFIER_DEFAULT
     NorthGroundSpeedModifier=`NORTH_PAWN_MODIFIER_DEFAULT
     NorthAccelRateModifier=`NORTH_PAWN_MODIFIER_DEFAULT
     NorthMaxFallSpeedModifier=`NORTH_PAWN_MODIFIER_DEFAULT
-
-    NorthReinforcementDelayModifier=`NORTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT
-    SouthReinforcementDelayModifier=`SOUTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT
 
     RORICSouth=(LevelContentClasses=("PicksAndPistols.PAPSouthPawn"))
     RORICNorth=(LevelContentClasses=("PicksAndPistols.PAPNorthPawn"))

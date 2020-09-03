@@ -1,8 +1,15 @@
-class PAPRoleInfoSouthernSurvivor extends PAPRoleInfoSouthernInfantry;
+class PAPRoleInfoSouthernSurvivor extends RORoleInfoSouthernInfantry;
 
 DefaultProperties
 {
+    RoleType=RORIT_Rifleman
+    ClassTier=1
+    ClassIndex=`ROCI_RIFLEMAN
+
     bAllowPistolsInRealism=True
+
+    ClassIcon=Texture2D'VN_UI_Textures.menu.class_icon_grunt'
+    ClassIconLarge=Texture2D'VN_UI_Textures.menu.ProfileStats.class_icon_large_grunt'
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(
@@ -12,6 +19,9 @@ DefaultProperties
             class'ROWeap_PM_Pistol',
             class'ROWeap_TT33_Pistol'
         ),
+        SquadLeaderItems=(),
+        SecondaryWeapons=(),
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
@@ -22,6 +32,9 @@ DefaultProperties
             class'ROWeap_PM_Pistol',
             class'ROWeap_TT33_Pistol'
         ),
+        SquadLeaderItems=(),
+        SecondaryWeapons=(),
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
@@ -32,6 +45,9 @@ DefaultProperties
             class'ROWeap_PM_Pistol',
             class'ROWeap_TT33_Pistol'
         ),
+        SquadLeaderItems=(),
+        SecondaryWeapons=(),
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
@@ -42,5 +58,8 @@ DefaultProperties
             class'ROWeap_PM_Pistol',
             class'ROWeap_TT33_Pistol'
         ),
+        SquadLeaderItems=(),
+        SecondaryWeapons=(),
+        OtherItems=()
     )}
 }

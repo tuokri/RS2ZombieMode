@@ -1,4 +1,4 @@
-class PAPRoleInfoSouthernCommander extends PAPRoleInfoSouthernInfantry;
+class PAPRoleInfoSouthernCommander extends RORoleInfoSouthernCommander;
 
 DefaultProperties
 {
@@ -12,6 +12,8 @@ DefaultProperties
             class'ROWeap_PM_Pistol',
             class'ROWeap_TT33_Pistol'
         ),
+        SecondaryWeapons=(),
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
@@ -22,6 +24,8 @@ DefaultProperties
             class'ROWeap_PM_Pistol',
             class'ROWeap_TT33_Pistol'
         ),
+        SecondaryWeapons=(),
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
@@ -32,6 +36,8 @@ DefaultProperties
             class'ROWeap_PM_Pistol',
             class'ROWeap_TT33_Pistol'
         ),
+        SecondaryWeapons=(),
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
@@ -42,5 +48,7 @@ DefaultProperties
             class'ROWeap_PM_Pistol',
             class'ROWeap_TT33_Pistol'
         ),
+        SecondaryWeapons=(),
+        OtherItems=()
     )}
 }
