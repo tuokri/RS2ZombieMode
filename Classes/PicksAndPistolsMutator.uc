@@ -9,9 +9,6 @@ var config float NorthMaxFallSpeedModifier;
 var config float NorthReinforcementDelayModifier;
 var config float SouthReinforcementDelayModifier;
 
-var localized array<string> NorthArmyNames;
-var localized array<string> SouthArmyNames;
-
 var RORoleInfoClasses RORICSouth;
 var RORoleInfoClasses RORICNorth;
 
@@ -38,7 +35,7 @@ function PostBeginPlay()
     ModifyMapInfo();
 }
 
-simulated reliable function ReplacePawns()
+simulated function ReplacePawns()
 {
     ROGameInfo(WorldInfo.Game).SouthRoleContentClasses = RORICSouth;
     ROGameInfo(WorldInfo.Game).NorthRoleContentClasses = RORICNorth;
@@ -47,15 +44,15 @@ simulated reliable function ReplacePawns()
 
 function ModifyGameInfo()
 {
-    local Actor A;
+    local PickupFactory PF;
     local int Count;
 
-    `paplog("Modifying game info", 'GameInfo')
-    foreach BasedActors(class'PickupFactory', A)
+    `paplog("Modifying game info", 'GameInfo');
+    foreach BasedActors(class'PickupFactory', PF)
     {
         // bPickupHidden = True;
-        // A.ShutDown();
-        A.Destroy();
+        // PF.ShutDown();
+        PF.Destroy();
         ++Count;
     }
 
@@ -65,11 +62,10 @@ function ModifyGameInfo()
     }
 }
 
-simulated reliable function ModifyMapInfo()
+simulated function ModifyMapInfo()
 {
     local RORoleCount RORC;
     local ROMapInfo ROMI;
-    local PAPMapInfo PAPMI;
 
     `paplog("Modifying map info", 'MapInfo');
     ROMI = ROMapInfo(WorldInfo.GetMapInfo());
@@ -77,7 +73,7 @@ simulated reliable function ModifyMapInfo()
     ROMI.NorthernTeamLeader.RoleInfo = new class'PAPRoleInfoNorthernCommander';
     // No Southern TL for now.
     // ROMI.SouthernTeamLeader.RoleInfo = new class'PAPRoleInfoSouthernCommander';
-    ROMI.SouthernTeamLeader.RoleInfo = None
+    ROMI.SouthernTeamLeader.RoleInfo = None;
 
     ROMI.NorthernRoles.Remove(0, ROMI.NorthernRoles.Length);
     ROMI.SouthernRoles.Remove(0, ROMI.NorthernRoles.Length);

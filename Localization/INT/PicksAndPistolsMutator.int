@@ -1,1 +1,11 @@
-[PicksAndPistolsMutator]
+[PAPRoleInfoSouthernSurvivor]
+MyName="SURVIVOR"
+
+[PAPRoleInfoSouthernFighter]
+MyName="FIGHTER"
+
+[PAPRoleInfoSouthernProtester]
+MyName="PROTESTER"
+
+[PAPRoleInfoNorthernZombie]
+MyName="ZOMBIE"

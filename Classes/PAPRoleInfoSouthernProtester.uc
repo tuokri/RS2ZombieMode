@@ -1,11 +1,12 @@
-class PAPRoleInfoNorthernZombie extends PAPRoleInfoNorthernInfantry;
+class PAPRoleInfoSouthernProtester extends PAPRoleInfoSouthernInfantry;
 
 DefaultProperties
 {
-    bAllowPistolsInRealism=False
+    bAllowPistolsInRealism=True
 
     Items[RORIGM_Default]={(
-        OtherItems=(class'ROGame.ROItem_TunnelTool')
+        PrimaryWeapons=(class'ROGame.ROWeap_PM_Pistol'),
+        OtherItems=(class'ROGame.ROWeap_Molotov')
     )}
 
     Items[RORIGM_Campaign_Early]=Items[RORIGM_Default]

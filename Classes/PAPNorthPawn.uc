@@ -8,6 +8,7 @@ simulated event byte ScriptGetTeamNum()
 DefaultProperties
 {
 	LegInjuryLength=0.1
+	BleedTimerRate=5.0
 
 	bCanPickupInventory=False
 	bCanResupply=False
