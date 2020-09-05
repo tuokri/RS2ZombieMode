@@ -1,5 +1,9 @@
 class PAPRoleInfoNorthernCommander extends RORoleInfoNorthernCommander;
 
+simulated function ExtraPawnModifiers(PAPNorthPawn NP)
+{
+}
+
 DefaultProperties
 {
     bAllowPistolsInRealism=False

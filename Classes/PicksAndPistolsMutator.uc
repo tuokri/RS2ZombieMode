@@ -26,80 +26,11 @@ function PostBeginPlay()
 {
     `paplog("PostBeginPlay()", 'Init');
     ReplacePawns();
-    DestroyPickupFactories();
     Fuck();
-}
-
-simulated function ReplaceRoles()
-{
-    local ROMapInfo ROMI;
-    local RORoleCount RORC;
-
-    ROMI = ROMapInfo(WorldInfo.GetMapInfo());
-
-    ROMI.NorthernRoles.Remove(0, ROMI.NorthernRoles.Length);
-    ROMI.SouthernRoles.Remove(0, ROMI.SouthernRoles.Length);
-
-    ROMI.NorthernTeamLeader.RoleInfo = new class'PAPRoleInfoNorthernCommander';
-    ROMI.SouthernTeamLeader.RoleInfo = new class'PAPRoleInfoSouthernCommander';
-
-    RORC.RoleInfoClass = class'PAPRoleInfoNorthernZombie';
-    RORC.Count = 255;
-    ROMI.NorthernRoles.AddItem(RORC);
-
-    RORC.RoleInfoClass = class'PAPRoleInfoSouthernSurvivor';
-    RORC.Count = 255;
-    ROMI.SouthernRoles.AddItem(RORC);
-
-    RORC.RoleInfoClass = class'PAPRoleInfoSouthernFighter';
-    RORC.Count = 2;
-    ROMI.SouthernRoles.AddItem(RORC);
-
-    RORC.RoleInfoClass = class'PAPRoleInfoSouthernProtester';
-    RORC.Count = 2;
-    ROMI.SouthernRoles.AddItem(RORC);
-}
-
-simulated function OverrideMapInfo()
-{
-    local ROMapInfo ROMI;
-
-    ROMI = ROMapInfo(WorldInfo.GetMapInfo());
-
-    /*
-    ROMI.AxisReinforcementDelay16 *= PAPPlayerController.default.NorthReinforcementDelayModifier;
-    ROMI.AxisReinforcementDelay32 *= PAPPlayerController.default.NorthReinforcementDelayModifier;
-    ROMI.AxisReinforcementDelay64 *= PAPPlayerController.default.NorthReinforcementDelayModifier;
-    ROMI.AlliesReinforcementDelay16 *= PAPPlayerController.default.SouthReinforcementDelayModifier;
-    ROMI.AlliesReinforcementDelay32 *= PAPPlayerController.default.SouthReinforcementDelayModifier;
-    ROMI.AlliesReinforcementDelay64 *= PAPPlayerController.default.SouthReinforcementDelayModifier;
-    */
-
-    ROMI.EnhancedLogisticsLimit16 = 0;
-    ROMI.EnhancedLogisticsLimit32 = 0;
-    ROMI.EnhancedLogisticsLimit64 = 0;
-    ROMI.NorthArtilleryStrikeLimit16 = 0;
-    ROMI.NorthArtilleryStrikeLimit32 = 0;
-    ROMI.NorthArtilleryStrikeLimit64 = 0;
-    ROMI.AC47GunshipStrikeLimit16 = 0;
-    ROMI.AC47GunshipStrikeLimit32 = 0;
-    ROMI.AC47GunshipStrikeLimit64 = 0;
-    ROMI.SouthArtilleryStrikeLimit16 = 0;
-    ROMI.SouthArtilleryStrikeLimit32 = 0;
-    ROMI.SouthArtilleryStrikeLimit64 = 0;
-    ROMI.NapalmStrikeLimit16 = 0;
-    ROMI.NapalmStrikeLimit32 = 0;
-    ROMI.NapalmStrikeLimit64 = 0;
-    ROMI.CarpetBomberStrikeLimit16 = 0;
-    ROMI.CarpetBomberStrikeLimit32 = 0;
-    ROMI.CarpetBomberStrikeLimit64 = 0;
-    ROMI.AntiAirCooldown = 0;
 }
 
 simulated function Fuck()
 {
-    ReplaceRoles();
-    OverrideMapInfo();
 }
 
 function VerifyConfig()
@@ -140,52 +71,41 @@ simulated function ReplacePawns()
     `paplog("Pawns replaced", 'Init');
 }
 
-function DestroyPickupFactories()
-{
-    local PickupFactory PF;
-    local int Count;
-
-    `paplog("Destroying pickup factories", 'Pickups');
-
-    foreach BasedActors(class'PickupFactory', PF)
-    {
-        // bPickupHidden = True;
-        // PF.ShutDown();
-        PF.Destroy();
-        ++Count;
-    }
-
-    if (Count > 0)
-    {
-        `paplog("Destroyed " $ Count $ " pickup factories", 'Pickups');
-    }
-}
-
-function ModifyNorthPlayer(out Pawn Other)
+simulated function ModifyNorthPlayer(out Pawn Other)
 {
     local PAPNorthPawn NP;
+    local RORoleInfo RORI;
+    local PAPRoleInfoNorthernInfantry RONI;
 
     NP = PAPNorthPawn(Other);
     NP.JumpZ *= NorthJumpZModifier;
     NP.GroundSpeed *= NorthGroundSpeedModifier;
     NP.AccelRate *= NorthAccelRateModifier;
     NP.MaxFallSpeed *= NorthMaxFallSpeedModifier;
+
+    RORI = PAPPlayerController(NP.Controller).GetRoleInfo();
+    `paplog("RoleInfo = " $ RORI, 'Debug');
+    RONI = PAPRoleInfoNorthernInfantry(RORI);
+    `paplog("RONI = " $ RONI, 'Debug');
+    RONI.ExtraPawnModifiers(NP);
 }
 
-function ModifySouthPlayer(out Pawn Other)
+simulated function ModifySouthPlayer(out Pawn Other)
 {
     local PAPSouthPawn SP;
 
     SP = PAPSouthPawn(Other);
 
-    // Now pilots for now.
+    // No pilots for now.
     // TODO: Make helicopters have no weapons.
     SP.bIsPilot = False;
 }
 
-function ModifyPlayer(Pawn Other)
+simulated function ModifyPlayer(Pawn Other)
 {
     super.ModifyPlayer(Other);
+
+    // `paplog("Modifying Pawn: " $ Other, 'Debug');
 
     if (Other.GetTeamNum() == `ALLIES_TEAM_INDEX)
     {

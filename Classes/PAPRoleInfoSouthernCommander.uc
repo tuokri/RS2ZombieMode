@@ -1,5 +1,9 @@
 class PAPRoleInfoSouthernCommander extends RORoleInfoSouthernCommander;
 
+simulated function ExtraPawnModifiers(PAPSouthPawn SP)
+{
+}
+
 DefaultProperties
 {
     bAllowPistolsInRealism=True

@@ -1,0 +1,2 @@
+class PAPGameInfoTerritories extends PAPGameInfo;
+

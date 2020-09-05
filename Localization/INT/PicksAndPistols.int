@@ -8,10 +8,19 @@ MyName="SURVIVOR"
 MyName="FIGHTER"
 
 [PAPRoleInfoSouthernProtester]
-MyName="PROTESTER"
+MyName="SPECIALIST"
+
+[PAPRoleInfoSouthernTrapper]
+MyName="TRAPPER"
 
 [PAPRoleInfoNorthernZombie]
 MyName="ZOMBIE"
+
+[PAPRoleInfoNorthernSmoker]
+MyName="SMOKER"
+
+[PAPRoleInfoNorthernLeaper]
+MyName="LEAPER"
 
 [PAPRoleInfoNorthernCommander]
 MyName="ZOMMANDER"

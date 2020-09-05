@@ -22,9 +22,9 @@ DefaultProperties
     SouthernRoles(1)=(RoleInfoClass=class'PAPRoleInfoSouthernFighter', Count=2)
     SouthernRoles(2)=(RoleInfoClass=class'PAPRoleInfoSouthernProtester', Count=2)
 
-    EnhancedLogisticsLimit16=0;
-    EnhancedLogisticsLimit32=0;
-    EnhancedLogisticsLimit64=0;
+    EnhancedLogisticsLimit16=8;
+    EnhancedLogisticsLimit32=8;
+    EnhancedLogisticsLimit64=8;
     NorthArtilleryStrikeLimit16=0;
     NorthArtilleryStrikeLimit32=0;
     NorthArtilleryStrikeLimit64=0;

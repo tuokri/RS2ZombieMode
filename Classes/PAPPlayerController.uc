@@ -59,6 +59,28 @@ simulated function ReplicateModShit()
 {
     ReplaceRoles();
     OverrideMapInfo();
+    DestroyPickupFactories();
+}
+
+simulated function DestroyPickupFactories()
+{
+    local PickupFactory PF;
+    local int Count;
+
+    `paplog("Destroying pickup factories", 'Pickups');
+
+    foreach BasedActors(class'PickupFactory', PF)
+    {
+        PF.bPickupHidden = True;
+        PF.ShutDown();
+        PF.Destroy();
+        ++Count;
+    }
+
+    if (Count > 0)
+    {
+        `paplog("Destroyed " $ Count $ " pickup factories", 'Pickups');
+    }
 }
 
 simulated function OverrideMapInfo()
@@ -74,9 +96,9 @@ simulated function OverrideMapInfo()
     ROMI.AlliesReinforcementDelay32 *= SouthReinforcementDelayModifier;
     ROMI.AlliesReinforcementDelay64 *= SouthReinforcementDelayModifier;
 
-    ROMI.EnhancedLogisticsLimit16 = 0;
-    ROMI.EnhancedLogisticsLimit32 = 0;
-    ROMI.EnhancedLogisticsLimit64 = 0;
+    ROMI.EnhancedLogisticsLimit16 = 8;
+    ROMI.EnhancedLogisticsLimit32 = 8;
+    ROMI.EnhancedLogisticsLimit64 = 8;
     ROMI.NorthArtilleryStrikeLimit16 = 0;
     ROMI.NorthArtilleryStrikeLimit32 = 0;
     ROMI.NorthArtilleryStrikeLimit64 = 0;
@@ -106,11 +128,30 @@ simulated function ReplaceRoles()
     ROMI.SouthernRoles.Remove(0, ROMI.SouthernRoles.Length);
 
     ROMI.NorthernTeamLeader.RoleInfo = new class'PAPRoleInfoNorthernCommander';
-    ROMI.SouthernTeamLeader.RoleInfo = new class'PAPRoleInfoSouthernCommander';
+    ROMI.SouthernTeamLeader.RoleInfo = None;
+    // ROMI.SouthernTeamLeader.RoleInfo = new class'PAPRoleInfoSouthernCommander';
 
     RORC.RoleInfoClass = class'PAPRoleInfoNorthernZombie';
     RORC.Count = 255;
     ROMI.NorthernRoles.AddItem(RORC);
+
+    RORC.RoleInfoClass = class'PAPRoleInfoNorthernSmoker';
+    RORC.Count = 6;
+    ROMI.NorthernRoles.AddItem(RORC);
+
+    RORC.RoleInfoClass = class'PAPRoleInfoNorthernLeaper';
+    RORC.Count = 4;
+    ROMI.NorthernRoles.AddItem(RORC);
+
+    /*
+    RORC.RoleInfoClass = class'PAPRoleInfoNorthernBomber';
+    RORC.Count = 4;
+    ROMI.NorthernRoles.AddItem(RORC);
+    */
+
+    RORC.RoleInfoClass = class'PAPRoleInfoSouthernProtester';
+    RORC.Count = 2;
+    ROMI.SouthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'PAPRoleInfoSouthernSurvivor';
     RORC.Count = 255;
@@ -123,6 +164,58 @@ simulated function ReplaceRoles()
     RORC.RoleInfoClass = class'PAPRoleInfoSouthernProtester';
     RORC.Count = 2;
     ROMI.SouthernRoles.AddItem(RORC);
+
+    RORC.RoleInfoClass = class'PAPRoleInfoSouthernTrapper';
+    RORC.Count = 2;
+    ROMI.SouthernRoles.AddItem(RORC);
+}
+
+reliable client function ClientTriggerMapBoundary()
+{
+    local ROPawn ROP;
+
+    ROP = ROPawn(Pawn);
+
+    // Zombies have no boundaries.
+    if (ROP != None && ROP.GetTeamNum() != `AXIS_TEAM_INDEX)
+    {
+        ROP.VolumeKillTime = 999999;
+        TriggerHint(ROHTrig_MapBoundary);
+    }
+}
+
+reliable client function ToggleMapBoundsSoundMode(bool bEnabled)
+{
+    local ROPawn ROP;
+
+    ROP = ROPawn(Pawn);
+
+    // Zombies have no boundaries.
+    if (ROP != None && ROP.GetTeamNum() == `AXIS_TEAM_INDEX)
+    {
+        ROP.VolumeKillTime = 999999;
+        bEnabled = False;
+    }
+
+    super.ToggleMapBoundsSoundMode(bEnabled);
+}
+
+reliable client event ReceiveLocalizedMessage(class<LocalMessage> Message, optional int Switch,
+    optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2,
+    optional Object OptionalObject)
+{
+    local ROPawn ROP;
+
+    ROP = ROPawn(Pawn);
+
+    // Zombies have no boundaries.
+    if (ROP != None && ROP.GetTeamNum() == `AXIS_TEAM_INDEX && Switch == RORAMSG_MapBoundaryTouch)
+    {
+        ROP.VolumeKillTime = 999999;
+        return;
+    }
+
+    super.ReceiveLocalizedMessage(Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
 }
 
 DefaultProperties

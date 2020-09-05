@@ -1,40 +1,40 @@
-class PAPRoleInfoNorthernZombie extends PAPRoleInfoNorthernInfantry;
+class PAPRoleInfoNorthernBomber extends PAPRoleInfoNorthernInfantry;
 
 DefaultProperties
 {
-    RoleType=RORIT_Rifleman
-    ClassTier=1
-    ClassIndex=`ROCI_RIFLEMAN
+    RoleType=RORIT_MachineGunner
+    ClassTier=2
+    ClassIndex=`ROCI_MACHINEGUNNER // 2
 
     bAllowPistolsInRealism=False
 
-    ClassIcon=Texture2D'VN_UI_Textures.menu.class_icon_guerilla'
-    ClassIconLarge=Texture2D'VN_UI_Textures.menu.ProfileStats.class_icon_large_guerilla'
+    ClassIcon=Texture2D'VN_UI_Textures.menu.class_icon_mg'
+    ClassIconLarge=Texture2D'VN_UI_Textures.menu.ProfileStats.class_icon_large_mg'
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(),
-        SecondaryWeapons=(),
+        SecondaryWeapons=(class'PicksAndPistols.PAPWeap_BomberBomb'),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(),
-        SecondaryWeapons=(),
+        SecondaryWeapons=(class'PicksAndPistols.PAPWeap_BomberBomb'),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(),
-        SecondaryWeapons=(),
+        SecondaryWeapons=(class'PicksAndPistols.PAPWeap_BomberBomb'),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(),
-        SecondaryWeapons=(),
+        SecondaryWeapons=(class'PicksAndPistols.PAPWeap_BomberBomb'),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
