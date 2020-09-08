@@ -1,0 +1,2 @@
+class ZMDmgType_BomberExplosion extends RODmgType_Satchel;
+

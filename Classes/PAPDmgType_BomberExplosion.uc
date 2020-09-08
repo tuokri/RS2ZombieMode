@@ -1,2 +1,0 @@
-class PAPDmgType_BomberExplosion extends RODmgType_Satchel;
-
