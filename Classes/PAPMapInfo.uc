@@ -1,6 +1,7 @@
 class PAPMapInfo extends ROMAPInfo
     config(Mutator_PicksAndPistols_Server);
 
+/*
 function PreBeginPlay()
 {
     `paplog("PAPMapInfo.PreBeginPlay()", 'MapInfo');
@@ -22,9 +23,9 @@ DefaultProperties
     SouthernRoles(1)=(RoleInfoClass=class'PAPRoleInfoSouthernFighter', Count=2)
     SouthernRoles(2)=(RoleInfoClass=class'PAPRoleInfoSouthernProtester', Count=2)
 
-    EnhancedLogisticsLimit16=8;
-    EnhancedLogisticsLimit32=8;
-    EnhancedLogisticsLimit64=8;
+    EnhancedLogisticsLimit16=0;
+    EnhancedLogisticsLimit32=0;
+    EnhancedLogisticsLimit64=0;
     NorthArtilleryStrikeLimit16=0;
     NorthArtilleryStrikeLimit32=0;
     NorthArtilleryStrikeLimit64=0;
@@ -42,3 +43,4 @@ DefaultProperties
     CarpetBomberStrikeLimit64=0;
     AntiAirCooldown=0;
 }
+*/

@@ -2,6 +2,8 @@ class PAPRoleInfoNorthernCommander extends RORoleInfoNorthernCommander;
 
 simulated function ExtraPawnModifiers(PAPNorthPawn NP)
 {
+    NP.HealthMax *= 1.5;
+    NP.Health *= 1.5;
 }
 
 DefaultProperties

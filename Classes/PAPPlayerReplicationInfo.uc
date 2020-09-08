@@ -1,5 +1,11 @@
 class PAPPlayerReplicationInfo extends ROPlayerReplicationInfo;
 
+simulated function ClientInitialize(Controller C)
+{
+    super.ClientInitialize(C);
+    PawnHandlerClass = class'PAPPawnHandler';
+}
+
 function bool SelectRoleByClass(Controller C, class<RORoleInfo> RoleInfoClass,
     optional out WeaponSelectionInfo WeaponSelection, optional out byte NewSquadIndex,
     optional out byte NewClassIndex, optional class<ROVehicle> TankSelection)
@@ -287,7 +293,7 @@ function bool SelectRoleByClass(Controller C, class<RORoleInfo> RoleInfoClass,
 
     if( bBot )
     {
-        PawnHandlerClass = class'ROPawnHandler';
+        PawnHandlerClass = class'PAPPawnHandler';
     }
 
     return bSuccess;
@@ -318,4 +324,9 @@ function bool IsWeaponIndexValid(RORoleInfo NewRoleInfo, ROPlayerController ROPC
     }
 
     return True;
+}
+
+DefaultProperties
+{
+    PawnHandlerClass=class'PAPPawnHandler'
 }

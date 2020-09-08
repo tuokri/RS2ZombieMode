@@ -1,11 +1,8 @@
 class PAPPlayerController extends ROPlayerController
     config(Mutator_PicksAndPistols_Client);
 
-var config float NorthReinforcementDelayModifier;
-var config float SouthReinforcementDelayModifier;
-
-var array<RORoleCount> SouthernRolesPAP;
-var array<RORoleCount> NorthernRolesPAP;
+var float NorthReinforcementDelayModifier;
+var float SouthReinforcementDelayModifier;
 
 function PreBeginPlay()
 {
@@ -21,7 +18,7 @@ simulated function ReceivedGameClass(class<GameInfo> GameClass)
 {
     super.ReceivedGameClass(GameClass);
 
-    `paplog("ReceivedGameClass");
+    `paplog("PAPPlayerController.ReceivedGameClass(), GameClass=" $ GameClass, 'Debug');
 
     if (WorldInfo.NetMode != NM_Standalone)
     {
@@ -96,9 +93,26 @@ simulated function OverrideMapInfo()
     ROMI.AlliesReinforcementDelay32 *= SouthReinforcementDelayModifier;
     ROMI.AlliesReinforcementDelay64 *= SouthReinforcementDelayModifier;
 
-    ROMI.EnhancedLogisticsLimit16 = 8;
-    ROMI.EnhancedLogisticsLimit32 = 8;
-    ROMI.EnhancedLogisticsLimit64 = 8;
+    `paplog("AxisReinforcementDelay16=" $ ROMI.AxisReinforcementDelay16, 'Debug');
+    `paplog("AxisReinforcementDelay32=" $ ROMI.AxisReinforcementDelay32, 'Debug');
+    `paplog("AxisReinforcementDelay64=" $ ROMI.AxisReinforcementDelay64, 'Debug');
+    `paplog("AlliesReinforcementDelay16=" $ ROMI.AlliesReinforcementDelay16, 'Debug');
+    `paplog("AlliesReinforcementDelay32=" $ ROMI.AlliesReinforcementDelay32, 'Debug');
+    `paplog("AlliesReinforcementDelay64=" $ ROMI.AlliesReinforcementDelay64, 'Debug');
+
+    ROMI.MinimumTimeDead = 0;
+    ROMI.ScoutReconInterval = 0;
+    ROMI.AerialReconInterval = 0;
+    ROMI.DefendingTeam = DT_South;
+    ROMI.DefendingTeam16 = DT_South;
+    ROMI.DefendingTeam32 = DT_South;
+    ROMI.DefendingTeam64 = DT_South;
+    ROMI.AxisReinforcementCount16 *= 1.5;
+    ROMI.AxisReinforcementCount32 *= 1.5;
+    ROMI.AxisReinforcementCount64 *= 1.5;
+    ROMI.EnhancedLogisticsLimit16 = 0;
+    ROMI.EnhancedLogisticsLimit32 = 0;
+    ROMI.EnhancedLogisticsLimit64 = 0;
     ROMI.NorthArtilleryStrikeLimit16 = 0;
     ROMI.NorthArtilleryStrikeLimit32 = 0;
     ROMI.NorthArtilleryStrikeLimit64 = 0;
@@ -115,6 +129,7 @@ simulated function OverrideMapInfo()
     ROMI.CarpetBomberStrikeLimit32 = 0;
     ROMI.CarpetBomberStrikeLimit64 = 0;
     ROMI.AntiAirCooldown = 0;
+    ROMI.InstantRespawnInterval = 30;
 }
 
 simulated function ReplaceRoles()
@@ -140,7 +155,7 @@ simulated function ReplaceRoles()
     ROMI.NorthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'PAPRoleInfoNorthernLeaper';
-    RORC.Count = 4;
+    RORC.Count = 8;
     ROMI.NorthernRoles.AddItem(RORC);
 
     /*
@@ -149,25 +164,23 @@ simulated function ReplaceRoles()
     ROMI.NorthernRoles.AddItem(RORC);
     */
 
-    RORC.RoleInfoClass = class'PAPRoleInfoSouthernProtester';
-    RORC.Count = 2;
-    ROMI.SouthernRoles.AddItem(RORC);
-
     RORC.RoleInfoClass = class'PAPRoleInfoSouthernSurvivor';
     RORC.Count = 255;
     ROMI.SouthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'PAPRoleInfoSouthernFighter';
-    RORC.Count = 2;
-    ROMI.SouthernRoles.AddItem(RORC);
-
-    RORC.RoleInfoClass = class'PAPRoleInfoSouthernProtester';
-    RORC.Count = 2;
+    RORC.Count = 3;
     ROMI.SouthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'PAPRoleInfoSouthernTrapper';
+    RORC.Count = 4;
+    ROMI.SouthernRoles.AddItem(RORC);
+
+    /*
+    RORC.RoleInfoClass = class'PAPRoleInfoSouthernGunner';
     RORC.Count = 2;
     ROMI.SouthernRoles.AddItem(RORC);
+    */
 }
 
 reliable client function ClientTriggerMapBoundary()
@@ -177,9 +190,13 @@ reliable client function ClientTriggerMapBoundary()
     ROP = ROPawn(Pawn);
 
     // Zombies have no boundaries.
-    if (ROP != None && ROP.GetTeamNum() != `AXIS_TEAM_INDEX)
+    if (ROP != None && ROP.GetTeamNum() == `AXIS_TEAM_INDEX)
     {
+        `paplog("ClientTriggerMapBoundary(): Ignore boundary for: " $ ROP, 'Boundary');
         ROP.VolumeKillTime = 999999;
+    }
+    else
+    {
         TriggerHint(ROHTrig_MapBoundary);
     }
 }
@@ -193,6 +210,7 @@ reliable client function ToggleMapBoundsSoundMode(bool bEnabled)
     // Zombies have no boundaries.
     if (ROP != None && ROP.GetTeamNum() == `AXIS_TEAM_INDEX)
     {
+        `paplog("ToggleMapBoundsSoundMode(): Ignore boundary for: " $ ROP, 'Boundary');
         ROP.VolumeKillTime = 999999;
         bEnabled = False;
     }
@@ -211,11 +229,61 @@ reliable client event ReceiveLocalizedMessage(class<LocalMessage> Message, optio
     // Zombies have no boundaries.
     if (ROP != None && ROP.GetTeamNum() == `AXIS_TEAM_INDEX && Switch == RORAMSG_MapBoundaryTouch)
     {
+        `paplog("ReceiveLocalizedMessage(): Ignore boundary for: " $ ROP, 'Boundary');
         ROP.VolumeKillTime = 999999;
+    }
+    else
+    {
+        super.ReceiveLocalizedMessage(Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+    }
+}
+
+function InitialiseCCMs()
+{
+    local ROCharacterPreviewActor ROCPA, CPABoth;
+    local ROCharCustMannequin TempCCM;
+
+    if( WorldInfo.NetMode == NM_DedicatedServer )
         return;
+
+    if( ROCCC == none )
+    {
+        ROCCC = Spawn(class'ROCharCustController');
+
+        if( ROCCC != none )
+            ROCCC.ROPCRef = self;
     }
 
-    super.ReceiveLocalizedMessage(Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+    foreach WorldInfo.DynamicActors(class'ROCharacterPreviewActor', ROCPA)
+    {
+        if( ROCPA.OwningTeam == EOT_Both )
+        {
+            CPABoth = ROCPA;
+        }
+        else if( AllCCMs[ROCPA.OwningTeam] == none )
+        {
+            AllCCMs[ROCPA.OwningTeam] = Spawn(class'PAPCharCustMannequin', self,, ROCPA.Location, ROCPA.Rotation);
+        }
+    }
+
+    if( AllCCMs[0] == none || AllCCMs[1] == none )
+    {
+        if( CPABoth != none )
+            TempCCM = Spawn(class'PAPCharCustMannequin', self,, CPABoth.Location, CPABoth.Rotation);
+        else
+        {
+            TempCCM = Spawn(class'PAPCharCustMannequin', self, , vect(0,0,100));
+            `warn("Couldn't find an PAPCharCustMannequin, the level designer has not added one to the map! Creating a default one"@TempCCM);
+        }
+
+        TempCCM.SetOwningTeam(EOT_Both);
+
+        if( AllCCMs[0] == none )
+            AllCCMs[0] = TempCCM;
+
+        if( AllCCMs[1] == none )
+            AllCCMs[1] = TempCCM;
+    }
 }
 
 DefaultProperties

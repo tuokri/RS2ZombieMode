@@ -14,13 +14,13 @@ DefaultProperties
 
     /*
     Begin Object Name=PickupMesh
-        SkeletalMesh=SkeletalMesh'WP_VN_3rd_Master.Mesh.C4_3rd_Master'
-        PhysicsAsset=PhysicsAsset'WP_VN_3rd_Master.Phy.C4_3rd_Master_Physics'
-        CollideActors=true
-        BlockActors=true
-        BlockZeroExtent=true
-        BlockNonZeroExtent=true//false
-        BlockRigidBody=true
+        SkeletalMesh=None
+        PhysicsAsset=None
+        CollideActors=none
+        BlockActors=none
+        BlockZeroExtent=none
+        BlockNonZeroExtent=none//false
+        BlockRigidBody=none
         bHasPhysicsAssetInstance=false
         bUpdateKinematicBonesFromAnimation=false
         PhysicsWeight=1.0

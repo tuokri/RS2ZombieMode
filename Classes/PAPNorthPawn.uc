@@ -1,9 +1,15 @@
 class PAPNorthPawn extends RONorthPawn;
 
+simulated event PreBeginPlay()
+{
+    PawnHandlerClass = class'PAPPawnHandler';
+
+    super.PreBeginPlay();
+}
+
 DefaultProperties
 {
     LegInjuryLength=0.05
-    BleedTimerRate=10.0
 
     bCanPickupInventory=False
     bCanResupply=False

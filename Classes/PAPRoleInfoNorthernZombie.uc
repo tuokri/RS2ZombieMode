@@ -12,28 +12,28 @@ DefaultProperties
     ClassIconLarge=Texture2D'VN_UI_Textures.menu.ProfileStats.class_icon_large_guerilla'
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'PicksAndPistols.PAPWeap_Katana'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'PicksAndPistols.PAPWeap_Katana'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'PicksAndPistols.PAPWeap_Katana'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'PicksAndPistols.PAPWeap_Katana'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
