@@ -1,17 +1,7 @@
-class ZMWeap_Katana_Level2 extends ZMWeap_Katana_Content;
+class ZMWeap_Katana_Level2 extends ZMWeap_Katana;
 
 DefaultProperties
 {
-	AttachmentClass=class'ZombieMode.ZMWeapAttach_Katana_Level2'
-
-	// Weapon SkeletalMesh
-	Begin Object Name=FirstPersonMesh
-		SkeletalMesh=SkeletalMesh'WP_RS_Jap_Katana.Mesh.JP_Katana_UPGD2'
-		Materials(0)=MaterialInstanceConstant'WP_RS_Jap_Katana.MIC.Katana_lvl2_Mat'
-	End Object
-
-	// Pickup staticmesh
-	Begin Object Name=PickupMesh
-		SkeletalMesh=SkeletalMesh'WP_RS_3rd_Master.Mesh_UPGD.Katana_3rd_Lvl2'
-	End Object
+	WeaponContentClass(0)="ZombieMode.ZMWeap_Katana_Content_Level2"
+	RoleSelectionImage(0)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD2'
 }

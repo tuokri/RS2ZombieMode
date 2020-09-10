@@ -8,7 +8,7 @@ DefaultProperties
 
 	// Weapon SkeletalMesh
 	Begin Object Name=SkeletalMeshComponent0
-		SkeletalMesh=SkeletalMesh'WP_RS_3rd_Master.Mesh.Katana_3rd_Master'
+		SkeletalMesh=SkeletalMesh'ZM_WP_RS_3rd_Master.Mesh.Katana_3rd_Master'
 		CullDistance=5000
 	End Object
 

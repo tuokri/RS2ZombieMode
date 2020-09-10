@@ -158,11 +158,9 @@ simulated function ReplaceRoles()
     RORC.Count = 8;
     ROMI.NorthernRoles.AddItem(RORC);
 
-    /*
     RORC.RoleInfoClass = class'ZMRoleInfoNorthernBomber';
     RORC.Count = 4;
     ROMI.NorthernRoles.AddItem(RORC);
-    */
 
     RORC.RoleInfoClass = class'ZMRoleInfoSouthernSurvivor';
     RORC.Count = 255;
@@ -174,6 +172,10 @@ simulated function ReplaceRoles()
 
     RORC.RoleInfoClass = class'ZMRoleInfoSouthernTrapper';
     RORC.Count = 4;
+    ROMI.SouthernRoles.AddItem(RORC);
+
+    RORC.RoleInfoClass = class'ZMRoleInfoSouthernRifleman';
+    RORC.Count = 2;
     ROMI.SouthernRoles.AddItem(RORC);
 
     /*

@@ -11,25 +11,25 @@ DefaultProperties
     bAllowPistolsInRealism=False
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level3'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Early]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level3'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Mid]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level3'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Late]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level3'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool')
     )}

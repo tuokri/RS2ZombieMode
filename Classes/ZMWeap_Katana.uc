@@ -14,11 +14,11 @@ simulated state WeaponEquipping
 defaultproperties
 {
 	WeaponContentClass(0)="ZombieMode.ZMWeap_Katana_Content"
-	WeaponContentClass(1)="ZombieMode.ZMWeap_Katana_Level2"
-	WeaponContentClass(2)="ZombieMode.ZMWeap_Katana_Level3"
+	// WeaponContentClass(1)="ZombieMode.ZMWeap_Katana_Level2"
+	// WeaponContentClass(2)="ZombieMode.ZMWeap_Katana_Level3"
 	RoleSelectionImage(0)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD1'
-	RoleSelectionImage(1)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD2'
-	RoleSelectionImage(2)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD3'
+	// RoleSelectionImage(1)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD2'
+	// RoleSelectionImage(2)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD3'
 
 	// RO Classic Mode
 	// ClassicWeaponLevelIndex=1
@@ -104,7 +104,7 @@ defaultproperties
 	SwingImpactSound=AkEvent'WW_WEP_Shared.Play_WEP_Melee_Bayonet_Hard'
 	SwingAttackHitFleshSound=AkEvent'WW_WEP_Shared.Play_WEP_Melee_Bayonet_Flesh'
 	MeleeAttackSound=AkEvent'WW_WEP_Shared.Play_WEP_Melee_Rifle_Swing'
-	MeleeImpactSound=AkEvent'WW_WEP_TunnelTool.Play_WEP_TunnelTool_Foley_Plant'
+	MeleeImpactSound=AkEvent'WW_WEP_Shared.Play_WEP_Melee_Bayonet_Hard'
 	MeleeAttackHitFleshSound=AkEvent'WW_WEP_Shared.Play_WEP_Melee_Rifle_Impact'
 
 	// Swing Settings

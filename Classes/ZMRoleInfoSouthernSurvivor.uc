@@ -12,7 +12,7 @@ DefaultProperties
     ClassIconLarge=Texture2D'VN_UI_Textures.menu.ProfileStats.class_icon_large_grunt'
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
+        // PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
         SecondaryWeapons=(
             class'ROGame.ROWeap_M1911_Pistol',
             class'ROWeap_M1917_Pistol',
@@ -24,7 +24,7 @@ DefaultProperties
     )}
 
     Items[RORIGM_Campaign_Early]={(
-        PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
+        // PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
         SecondaryWeapons=(
             class'ROGame.ROWeap_M1911_Pistol',
             class'ROWeap_M1917_Pistol',
@@ -36,7 +36,7 @@ DefaultProperties
     )}
 
     Items[RORIGM_Campaign_Mid]={(
-        PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
+        // PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
         SecondaryWeapons=(
             class'ROGame.ROWeap_M1911_Pistol',
             class'ROWeap_M1917_Pistol',
@@ -48,7 +48,7 @@ DefaultProperties
     )}
 
     Items[RORIGM_Campaign_Late]={(
-        PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
+        // PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
         SecondaryWeapons=(
             class'ROGame.ROWeap_M1911_Pistol',
             class'ROWeap_M1917_Pistol',

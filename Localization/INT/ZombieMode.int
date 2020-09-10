@@ -30,3 +30,6 @@ MyName="LOCAL AGITATOR"
 
 [ZMRoleInfoSouthernGunner]
 MyName="GUNNER"
+
+[ZMRoleInfoSouthernRifleman]
+MyName="RIFLEMAN"

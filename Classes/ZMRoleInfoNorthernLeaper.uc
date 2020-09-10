@@ -24,28 +24,28 @@ DefaultProperties
     ClassIconLarge=Texture2D'VN_UI_Textures.menu.ProfileStats.class_icon_large_scout'
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level2'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level2'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level2'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level2'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool'),
         SquadLeaderItems=()

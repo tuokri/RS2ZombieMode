@@ -15,28 +15,28 @@ DefaultProperties
 	ClassIndex=`ROCI_SCOUT // 1
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool', class'ROGame.ROWeap_RDG1_Smoke'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool', class'ROGame.ROWeap_RDG1_Smoke'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool', class'ROGame.ROWeap_RDG1_Smoke'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
-        PrimaryWeapons=(),
+        PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
         OtherItems=(class'ROGame.ROItem_TunnelTool', class'ROGame.ROWeap_RDG1_Smoke'),
         SquadLeaderItems=()
