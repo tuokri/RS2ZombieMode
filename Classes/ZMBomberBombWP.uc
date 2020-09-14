@@ -1,0 +1,1 @@
+class ZMBomberBombWP extends ZMBomberBomb;

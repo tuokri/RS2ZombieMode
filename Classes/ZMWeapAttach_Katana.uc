@@ -8,14 +8,14 @@ DefaultProperties
 
 	// Weapon SkeletalMesh
 	Begin Object Name=SkeletalMeshComponent0
-		SkeletalMesh=SkeletalMesh'ZM_WP_RS_3rd_Master.Mesh.Katana_3rd_Master'
+		SkeletalMesh=SkeletalMesh'ZM_WP_RS_3rd_Master.Mesh_UPGD.Katana_3rd_Master'
 		CullDistance=5000
 	End Object
 
 	WeaponClass=class'ZMWeap_Katana'
 
 	// ROPawn weapon specific animations
-	CHR_AnimSet=AnimSet'CHR_RS_Playeranim_Master.Weapons.CHR_Katana'
+	CHR_AnimSet=AnimSet'ZM_CHR_RS_Playeranim_Master.Weapons.CHR_Katana'
 
 	// Player animations - Weapon Actions
 	HolsterWeaponAnim=Katana_Putaway
@@ -33,5 +33,4 @@ DefaultProperties
 	MeleeBashChargeAnim_CH=CH_Katana_Attack_Hard
 	MeleeStabChargeAnim=Katana_Attack_Hard
 	MeleeStabChargeAnim_CH=CH_Katana_Attack_Hard
-
 }

@@ -13,7 +13,7 @@ DefaultProperties
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'ROGame.ROWeap_MN9130_Rifle'),
-        SecondaryWeapons=(class'ROGame.ROWeap_BHP_Pistol'),
+        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
@@ -23,7 +23,7 @@ DefaultProperties
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(class'ROGame.ROWeap_MN9130_Rifle'),
-        SecondaryWeapons=(class'ROGame.ROWeap_BHP_Pistol'),
+        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
@@ -33,7 +33,7 @@ DefaultProperties
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(class'ROGame.ROWeap_MN9130_Rifle'),
-        SecondaryWeapons=(class'ROGame.ROWeap_BHP_Pistol'),
+        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
@@ -43,7 +43,7 @@ DefaultProperties
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(class'ROGame.ROWeap_MN9130_Rifle'),
-        SecondaryWeapons=(class'ROGame.ROWeap_BHP_Pistol'),
+        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',

@@ -4,7 +4,7 @@ DefaultProperties
 {
     RoleType=RORIT_Rifleman
     ClassTier=1
-    ClassIndex=`ROCI_RIFLEMAN
+    ClassIndex=`ROCI_SCOUT
 
     bAllowPistolsInRealism=True
 

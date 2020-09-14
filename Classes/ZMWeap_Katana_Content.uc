@@ -19,7 +19,7 @@ DefaultProperties
 
 	// Pickup staticmesh
 	Begin Object Name=PickupMesh
-		SkeletalMesh=SkeletalMesh'ZM_WP_RS_3rd_Master.Mesh.Katana_3rd_Master'
+		SkeletalMesh=SkeletalMesh'ZM_WP_RS_3rd_Master.Mesh_UPGD.Katana_3rd_Master'
 		PhysicsAsset=PhysicsAsset'ZM_WP_RS_3rd_Master.Phy.Katana_3rd_Physics'
 		CollideActors=true
 		BlockActors=true

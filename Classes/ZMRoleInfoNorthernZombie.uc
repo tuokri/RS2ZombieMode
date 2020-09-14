@@ -3,9 +3,6 @@ class ZMRoleInfoNorthernZombie extends ZMRoleInfoNorthernInfantry;
 simulated function ExtraPawnModifiers(ZMNorthPawn NP)
 {
     super.ExtraPawnModifiers(NP);
-
-    NP.HealthMax *= 1.5;
-    NP.Health *= 1.5;
 }
 
 DefaultProperties
@@ -22,28 +19,28 @@ DefaultProperties
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool'),
-        SquadLeaderItems=()
+        OtherItems=(),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool'),
-        SquadLeaderItems=()
+        OtherItems=(),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool'),
-        SquadLeaderItems=()
+        OtherItems=(),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool'),
-        SquadLeaderItems=()
+        OtherItems=(),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 }

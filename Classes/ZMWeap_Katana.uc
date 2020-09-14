@@ -6,8 +6,7 @@ simulated state WeaponEquipping
 	{
 		super.BeginState(PreviousStateName);
 
-		// TODO: HUD stuff.
-		// ROPlayerController(Instigator.Controller).TriggerHint(ROHTrig_Katana);
+		ZMPlayerController(Instigator.Controller).TriggerHint(ZMHTrig_Katana);
 	}
 }
 
@@ -16,9 +15,9 @@ defaultproperties
 	WeaponContentClass(0)="ZombieMode.ZMWeap_Katana_Content"
 	// WeaponContentClass(1)="ZombieMode.ZMWeap_Katana_Level2"
 	// WeaponContentClass(2)="ZombieMode.ZMWeap_Katana_Level3"
-	RoleSelectionImage(0)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD1'
-	// RoleSelectionImage(1)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD2'
-	// RoleSelectionImage(2)=Texture2D'RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD3'
+	RoleSelectionImage(0)=Texture2D'ZM_RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD1'
+	// RoleSelectionImage(1)=Texture2D'ZM_RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD2'
+	// RoleSelectionImage(2)=Texture2D'ZM_RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD3'
 
 	// RO Classic Mode
 	// ClassicWeaponLevelIndex=1
@@ -27,7 +26,7 @@ defaultproperties
 	//WeaponClassType=ROWCT_SemiAutoRifle
 	TeamIndex=`AXIS_TEAM_INDEX
 
-	Category=ROIC_Equipment
+	Category=ROIC_Primary
 	Weight=1 // kg
 	RoleEncumbranceModifier=0.0
 	InvIndex=`RSII_ZMWeap_Katana

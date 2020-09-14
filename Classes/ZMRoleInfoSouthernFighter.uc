@@ -4,7 +4,7 @@ DefaultProperties
 {
     RoleType=RORIT_Scout
     ClassTier=2
-    ClassIndex=`ROCI_SCOUT // 1
+    ClassIndex=`ROCI_HEAVY // 1
 
     bAllowPistolsInRealism=False
 

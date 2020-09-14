@@ -26,28 +26,28 @@ DefaultProperties
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level2'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool'),
-        SquadLeaderItems=()
+        OtherItems=(),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level2'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool'),
-        SquadLeaderItems=()
+        OtherItems=(),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level2'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool'),
-        SquadLeaderItems=()
+        OtherItems=(),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level2'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool'),
-        SquadLeaderItems=()
+        OtherItems=(),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 }

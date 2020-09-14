@@ -1,0 +1,1 @@
+class ZMBomberBombHE extends ZMBomberBomb;

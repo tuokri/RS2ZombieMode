@@ -4,6 +4,11 @@ class ZMPlayerController extends ROPlayerController
 var float NorthReinforcementDelayModifier;
 var float SouthReinforcementDelayModifier;
 
+var float   CachedSFXVolume;
+var int     CachedSFXVolumeAge;
+var int     CachedSFXVolumeMaxAge;
+
+
 function PreBeginPlay()
 {
     super.PreBeginPlay();
@@ -12,6 +17,37 @@ function PreBeginPlay()
     {
         ReplicateModShit();
     }
+}
+
+simulated function float GetSFXVolumeSetting()
+{
+    local AudioDevice Audio;
+    local float TimeSeconds;
+
+    /* TODO: Do we need to run this on server?
+    if (Role > ROLE_Authority)
+    {
+        return CachedSFXVolume;
+    }
+    */
+
+    TimeSeconds = WorldInfo.TimeSeconds;
+    if (TimeSeconds > (CachedSFXVolumeAge + CachedSFXVolumeMaxAge))
+    {
+        Audio = class'Engine'.static.GetAudioDevice();
+        if (Audio != None)
+        {
+            CachedSFXVolume = Audio.AKSFXVolume * Audio.AKMasterVolume;
+            CachedSFXVolumeAge = TimeSeconds;
+
+            `zmlog("Fetching SFX volume, WorldInfo.TimeSeconds=" $ WorldInfo.TimeSeconds
+                $ ", CachedSFXVolumeAge + CachedSFXVolumeMaxAge="
+                $ CachedSFXVolumeAge + CachedSFXVolumeMaxAge, 'Debug');
+
+        }
+    }
+
+    return CachedSFXVolume;
 }
 
 simulated function ReceivedGameClass(class<GameInfo> GameClass)
@@ -56,9 +92,10 @@ simulated function ReplicateModShit()
 {
     ReplaceRoles();
     OverrideMapInfo();
-    DestroyPickupFactories();
+    // DestroyPickupFactories();
 }
 
+// TODO: Doesn't work.
 simulated function DestroyPickupFactories()
 {
     local PickupFactory PF;
@@ -143,8 +180,8 @@ simulated function ReplaceRoles()
     ROMI.SouthernRoles.Remove(0, ROMI.SouthernRoles.Length);
 
     ROMI.NorthernTeamLeader.RoleInfo = new class'ZMRoleInfoNorthernCommander';
-    ROMI.SouthernTeamLeader.RoleInfo = None;
-    // ROMI.SouthernTeamLeader.RoleInfo = new class'ZMRoleInfoSouthernCommander';
+    // ROMI.SouthernTeamLeader.RoleInfo = None;
+    ROMI.SouthernTeamLeader.RoleInfo = new class'ZMRoleInfoSouthernCommander';
 
     RORC.RoleInfoClass = class'ZMRoleInfoNorthernZombie';
     RORC.Count = 255;
@@ -158,9 +195,11 @@ simulated function ReplaceRoles()
     RORC.Count = 8;
     ROMI.NorthernRoles.AddItem(RORC);
 
+    /*
     RORC.RoleInfoClass = class'ZMRoleInfoNorthernBomber';
     RORC.Count = 4;
     ROMI.NorthernRoles.AddItem(RORC);
+    */
 
     RORC.RoleInfoClass = class'ZMRoleInfoSouthernSurvivor';
     RORC.Count = 255;
@@ -170,12 +209,14 @@ simulated function ReplaceRoles()
     RORC.Count = 3;
     ROMI.SouthernRoles.AddItem(RORC);
 
+    // DuckBill class.
+
     RORC.RoleInfoClass = class'ZMRoleInfoSouthernTrapper';
     RORC.Count = 4;
     ROMI.SouthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'ZMRoleInfoSouthernRifleman';
-    RORC.Count = 2;
+    RORC.Count = 6;
     ROMI.SouthernRoles.AddItem(RORC);
 
     /*
@@ -185,6 +226,7 @@ simulated function ReplaceRoles()
     */
 }
 
+/*
 reliable client function ClientTriggerMapBoundary()
 {
     local ROPawn ROP;
@@ -202,7 +244,9 @@ reliable client function ClientTriggerMapBoundary()
         TriggerHint(ROHTrig_MapBoundary);
     }
 }
+*/
 
+/*
 reliable client function ToggleMapBoundsSoundMode(bool bEnabled)
 {
     local ROPawn ROP;
@@ -219,7 +263,9 @@ reliable client function ToggleMapBoundsSoundMode(bool bEnabled)
 
     super.ToggleMapBoundsSoundMode(bEnabled);
 }
+*/
 
+/*
 reliable client event ReceiveLocalizedMessage(class<LocalMessage> Message, optional int Switch,
     optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2,
     optional Object OptionalObject)
@@ -239,6 +285,7 @@ reliable client event ReceiveLocalizedMessage(class<LocalMessage> Message, optio
         super.ReceiveLocalizedMessage(Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
     }
 }
+*/
 
 function InitialiseCCMs()
 {
@@ -290,6 +337,9 @@ function InitialiseCCMs()
 
 DefaultProperties
 {
+    CachedSFXVolume=0.2
+    CachedSFXVolumeMaxAge=2 // Seconds.
+
     NorthReinforcementDelayModifier=`NORTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT
     SouthReinforcementDelayModifier=`SOUTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT
 }

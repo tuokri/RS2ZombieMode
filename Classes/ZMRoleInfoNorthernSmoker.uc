@@ -3,9 +3,6 @@ class ZMRoleInfoNorthernSmoker extends ZMRoleInfoNorthernInfantry;
 simulated function ExtraPawnModifiers(ZMNorthPawn NP)
 {
     super.ExtraPawnModifiers(NP);
-
-    NP.HealthMax *= 1.5;
-    NP.Health *= 1.5;
 }
 
 DefaultProperties
@@ -17,29 +14,29 @@ DefaultProperties
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool', class'ROGame.ROWeap_RDG1_Smoke'),
-        SquadLeaderItems=()
+        OtherItems=(class'ROGame.ROWeap_RDG1_Smoke'),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool', class'ROGame.ROWeap_RDG1_Smoke'),
-        SquadLeaderItems=()
+        OtherItems=(class'ROGame.ROWeap_RDG1_Smoke'),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool', class'ROGame.ROWeap_RDG1_Smoke'),
-        SquadLeaderItems=()
+        OtherItems=(class'ROGame.ROWeap_RDG1_Smoke'),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROItem_TunnelTool', class'ROGame.ROWeap_RDG1_Smoke'),
-        SquadLeaderItems=()
+        OtherItems=(class'ROGame.ROWeap_RDG1_Smoke'),
+        SquadLeaderItems=(class'ROGame.ROItem_TunnelTool')
     )}
 
 	ClassIcon=Texture2D'VN_UI_Textures.menu.class_icon_scout'
