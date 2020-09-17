@@ -3,7 +3,7 @@ class ZMBullet_DesertEagle extends ROBullet;
 
 DefaultProperties
 {
-	BallisticCoefficient=0.245 // TODO: Check this.
+	BallisticCoefficient=0.200 // TODO: Check this.
 
 	// Damage=230
 	Damage=300 // 110
@@ -12,11 +12,7 @@ DefaultProperties
 	MaxSpeed=22950	// 450 m/s - 12750=255 m/s
 
 	// RS2. Energy transfer function
-	// RPD, Type 56, AKM, SKS
-	VelocityDamageFalloffCurve=(Points=((InVal=302760000,OutVal=0.46),(InVal=1560250000,OutVal=0.12)))
-
-	// RS2. Energy transfer function
 	// M1911, M3A1
-	// VelocityDamageFalloffCurve=(Points=((InVal=49000000,OutVal=0.1),(InVal=162562500,OutVal=0.95)))
+	VelocityDamageFalloffCurve=(Points=((InVal=49000000,OutVal=0.1),(InVal=162562500,OutVal=0.95)))
 	// VelocityDamageFalloffCurve=(Points=((InVal=0.5,OutVal=1.0),(InVal=1.0,OutVal=0.9)))
 }

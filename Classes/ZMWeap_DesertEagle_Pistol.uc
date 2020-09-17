@@ -10,10 +10,12 @@ var(Sounds) array<SoundCue> WeaponFirePingSndFirstPerson;
 var(Sounds) array<SoundCue> WeaponFireSndCustom;
 var(Sounds) array<SoundCue> WeaponFireSndFirstPersonCustom;
 
+/*
 simulated function float GetSpreadMod()
 {
     return 3 * super.GetSpreadMod();
 }
+*/
 
 // TODO: clean up last shot ping code.
 simulated function PlayFiringSound(byte FireModeNum)
@@ -72,6 +74,7 @@ simulated function PlayFiringSound(byte FireModeNum)
 simulated function WeaponPlayCustomSound(SoundCue Sound, optional float NoiseLoudness)
 {
     Sound.VolumeMultiplier = ZMPlayerController(Instigator.Controller).GetSFXVolumeSetting();
+    Sound.VolumeMultiplier *= 3; // TODO: temporary.
 
     // if we are a listen server, just play the sound.  It will play locally
     // and be replicated to all other clients.
@@ -284,8 +287,6 @@ DefaultProperties
 
     EquipTime=+0.65 // 0.45
 
-    bDebugWeapon = false
-
     BoltControllerNames[0]=SlideControl_M1911
     BoltControllerNames[1]=SlideControl_M1911_2
 
@@ -310,7 +311,7 @@ DefaultProperties
     //ShoulderedTime=0.35
     ShoulderedPosition=(X=5.0,Y=2.0,Z=-2.0)
     //ShoulderRotation=(Pitch=-300,Yaw=500,Roll=1500)
-    IronSightPosition=(X=0,Y=0,Z=0)
+    IronSightPosition=(X=0,Y=0,Z=-30) // Z=0
 
     bUsesFreeAim=true
 
@@ -355,4 +356,6 @@ DefaultProperties
     WeaponReloadNonEmptyMagIronAnim=M1911_reloadhalf_Ironsight
 
     SwayScale=0.9 // 0.6
+
+    bDebugWeapon=True
 }

@@ -30,9 +30,32 @@ function PostBeginPlay()
 simulated function Fuck()
 {
     OverrideMapInfo();
+    DestroyPickupFactories();
 }
 
-// TODO: is this needed / does this even work?
+// TODO: Doesn't work.
+// foreach WorldInfo.AllPawns(class'ROVehicleHelicopter', ROVH)
+simulated function DestroyPickupFactories()
+{
+    local PickupFactory PF;
+    local int Count;
+
+    `zmlog("Destroying pickup factories", 'Pickups');
+
+    foreach WorldInfo.BasedActors(class'PickupFactory', PF)
+    {
+        PF.bPickupHidden = True;
+        PF.ShutDown();
+        PF.Destroy();
+        ++Count;
+    }
+
+    if (Count > 0)
+    {
+        `zmlog("Destroyed " $ Count $ " pickup factories", 'Pickups');
+    }
+}
+
 simulated function OverrideMapInfo()
 {
     local ROMapInfo ROMI;

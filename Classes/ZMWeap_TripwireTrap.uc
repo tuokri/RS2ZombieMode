@@ -9,4 +9,6 @@ DefaultProperties
 	MaxAmmoCount=2
 	InitialNumPrimaryMags=2
 	MaxAllowedAtOnce=2
+
+	AmmoClass=class'ZMAmmo_TripwireTrap'
 }

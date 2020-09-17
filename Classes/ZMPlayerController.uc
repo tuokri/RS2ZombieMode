@@ -40,10 +40,12 @@ simulated function float GetSFXVolumeSetting()
             CachedSFXVolume = Audio.AKSFXVolume * Audio.AKMasterVolume;
             CachedSFXVolumeAge = TimeSeconds;
 
-            `zmlog("Fetching SFX volume, WorldInfo.TimeSeconds=" $ WorldInfo.TimeSeconds
-                $ ", CachedSFXVolumeAge + CachedSFXVolumeMaxAge="
-                $ CachedSFXVolumeAge + CachedSFXVolumeMaxAge, 'Debug');
+            `zmlog("Audio.AKSFXVolume=    " $ Audio.AKSFXVolume);
+            `zmlog("Audio.AKMasterVolume= " $ Audio.AKMasterVolume);
 
+            `zmlog("Fetching SFX volume= " $ CachedSFXVolume $ ", WorldInfo.TimeSeconds="
+                $ WorldInfo.TimeSeconds $ ", CachedSFXVolumeAge + CachedSFXVolumeMaxAge="
+                $ CachedSFXVolumeAge + CachedSFXVolumeMaxAge, 'Debug');
         }
     }
 
@@ -92,29 +94,6 @@ simulated function ReplicateModShit()
 {
     ReplaceRoles();
     OverrideMapInfo();
-    // DestroyPickupFactories();
-}
-
-// TODO: Doesn't work.
-simulated function DestroyPickupFactories()
-{
-    local PickupFactory PF;
-    local int Count;
-
-    `zmlog("Destroying pickup factories", 'Pickups');
-
-    foreach BasedActors(class'PickupFactory', PF)
-    {
-        PF.bPickupHidden = True;
-        PF.ShutDown();
-        PF.Destroy();
-        ++Count;
-    }
-
-    if (Count > 0)
-    {
-        `zmlog("Destroyed " $ Count $ " pickup factories", 'Pickups');
-    }
 }
 
 simulated function OverrideMapInfo()
@@ -334,6 +313,63 @@ function InitialiseCCMs()
             AllCCMs[1] = TempCCM;
     }
 }
+
+//////////////////////////////////////////////////
+// DEBUG
+//////////////////////////////////////////////////
+
+`ifdef(DEBUG)
+
+simulated exec function SpawnZMM113()
+{
+    local vector                    CamLoc, StartShot, EndShot, X, Y, Z;
+    local rotator                   CamRot;
+    local class<ROVehicle>          TankClass;
+    Local ROVehicle ROTank;
+
+    GetPlayerViewPoint(CamLoc, CamRot);
+
+    // Do ray check and grab actor
+    GetAxes( CamRot, X, Y, Z );
+    StartShot   = CamLoc;
+    EndShot     = StartShot + (200.0 * X);
+
+    TankClass = class<ROVehicle>(DynamicLoadObject("ZombieMode.ZMVehicle_M113_APC_Content", class'Class'));
+
+    if( TankClass != none )
+    {
+        ROTank = Spawn(TankClass, , , EndShot);
+        ROTank.Mesh.AddImpulse(vect(0,0,1), ROTank.Location);
+    }
+}
+
+exec function Camera( name NewMode )
+{
+    ServerCamera(NewMode);
+}
+
+reliable server function ServerCamera( name NewMode )
+{
+    if ( NewMode == '1st' )
+    {
+        NewMode = 'FirstPerson';
+    }
+    else if ( NewMode == '3rd' )
+    {
+        NewMode = 'ThirdPerson';
+    }
+
+    SetCameraMode( NewMode );
+
+    if ( PlayerCamera != None )
+        `log("#### " $ PlayerCamera.CameraStyle);
+}
+
+`endif
+
+//////////////////////////////////////////////////
+// DEBUG END
+//////////////////////////////////////////////////
 
 DefaultProperties
 {
