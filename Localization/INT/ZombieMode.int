@@ -33,3 +33,13 @@ MyName="GUNNER"
 
 [ZMRoleInfoSouthernRifleman]
 MyName="RIFLEMAN"
+
+[ZMRoleInfoNorthernFlamer]
+MyName="FLAMER"
+
+[ZMRoleInfoSouthernBruiser]
+MyName="BRUISER"
+
+[ZMRoleInfoSouthernDemolitions]
+MyName="DEMOLITIONS"
+

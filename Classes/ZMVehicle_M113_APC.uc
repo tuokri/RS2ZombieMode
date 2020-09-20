@@ -38,6 +38,7 @@ var(Periscope) const ROSceneCapture2DDPGComponent SceneCapture2;
 var TextureRenderTarget2D PeriscopeTextureTarget2;
 var const MaterialInstanceConstant PeriscopeLenseMICTemplate2;
 var MaterialInstanceConstant PeriscopeLenseMIC2;
+var(Periscope) name InterpParamName;
 
 
 replication
@@ -848,5 +849,5 @@ DefaultProperties
 
     // Periscope
     PeriscopeLenseMICTemplate2=MaterialInstanceConstant'ZM_VH_Drivable_M113_APC.MIC.PeriscopeRenderTarget_2'
-    PeriscopeLenseMICTemplate2.bUsedWithSkeletalMesh=True
+    // PeriscopeLenseMICTemplate2.bUsedWithSkeletalMesh=True
 }

@@ -4,8 +4,6 @@ simulated function ExtraPawnModifiers(ZMNorthPawn NP)
 {
     super.ExtraPawnModifiers(NP);
 
-    // `zmlog("Applying extra Leaper modifiers", 'Debug');
-
     NP.Jumpz *= 3;
     NP.MaxFallSpeed *= 3;
     NP.AirControl *= 5;

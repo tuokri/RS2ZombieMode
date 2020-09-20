@@ -1,5 +1,6 @@
 class ZMPawnHandler extends ROPawnHandler;
 
+
 static function SkeletalMesh GetFPArmsMesh(int Team, int ArmyIndex, byte bPilot,
     byte TunicMeshID, byte TunicMaterialID, byte SkinToneID, out MaterialInstanceConstant SkinMIC,
     out MaterialInstanceConstant SleeveMIC)
@@ -20,6 +21,7 @@ static function SkeletalMesh GetFPArmsMesh(int Team, int ArmyIndex, byte bPilot,
     return Tunics[TunicMeshID].ArmsMeshFP;
 }
 
+// TODO: proper head setup.
 DefaultProperties
 {
     VietnameseHeads(0)=(HeadMesh=SkeletalMesh'CHR_VN_VN_Heads.Mesh.VN_Head1_Mesh',HeadMICTemplates=(MaterialInstanceConstant'ZM_CHR_VN_VN_Heads_Z.Materials.M_VN_Head_01_Long_INST',MaterialInstanceConstant'ZM_CHR_VN_VN_Heads_Z.Materials.M_VN_Head_01_Tied_INST',MaterialInstanceConstant'ZM_CHR_VN_VN_Heads_Z.Materials.M_VN_Head_01_Torn_INST',MaterialInstanceConstant'ZM_CHR_VN_VN_Heads_Z.Materials.M_VN_Head_01_Tied_Pants_INST',MaterialInstanceConstant'ZM_CHR_VN_VN_Heads_Z.Materials.M_VN_Head_01_Torn_Pants_INST',MaterialInstanceConstant'ZM_CHR_VN_VN_Heads_Z.Materials.M_VN_Head_01_Torn_INST',MaterialInstanceConstant'ZM_CHR_VN_VN_Heads_Z.Materials.M_VN_Head_01_Torn_INST'),SkinToneID=2,HairColours=49,ThumbnailImage=Texture2D'VN_UI_Textures_Character.Heads.Head_Viet_01')

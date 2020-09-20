@@ -1,31 +1,60 @@
 class ZMVehicle_M113_APC_Content extends ZMVehicle_M113_APC
 	placeable;
 
+
+
 simulated event PostBeginPlay()
 {
+	local Vector SocketLocation;
+	local Rotator SocketRotation;
+
 	super.PostBeginPlay();
 
     PeriscopeLenseMIC2 = new class'MaterialInstanceConstant';
 	PeriscopeLenseMIC2.SetParent(PeriscopeLenseMICTemplate2);
-	PeriscopeLenseMIC2.SetTextureParameterValue('RenderToTextureMap', PeriscopeTextureTarget2);
-	// PeriscopeLenseMIC2.SetScalarParameterValue(InterpParamName, 0.0);
-	GetVehicleMeshAttachment('IntBodyComponent').SetMaterial(2 + 3, PeriscopeLenseMIC2);
+	PeriscopeLenseMIC2.SetTextureParameterValue('ScopeTextureTarget', PeriscopeTextureTarget2);
+    PeriscopeLenseMIC2.SetScalarParameterValue(InterpParamName, 1.0);
+	GetVehicleMeshAttachment('IntBodyComponent').SetMaterial(4, PeriscopeLenseMIC2);
 
-    PeriscopeTextureTarget2 = class'TextureRenderTarget2D'.static.Create(2048, 2048, PF_A8R8G8B8);
+    PeriscopeTextureTarget2 = class'TextureRenderTarget2D'.static.Create(1024, 1024, PF_A8R8G8B8); // arbitrary numbers
     SceneCapture2.SetCaptureParameters(PeriscopeTextureTarget2);
-    PeriscopeLenseMIC2.SetTextureParameterValue('RenderToTextureMap', PeriscopeTextureTarget2);
+    PeriscopeLenseMIC2.SetTextureParameterValue('ScopeTextureTarget', PeriscopeTextureTarget2);
 
-    Mesh.AttachComponent(SceneCapture2, 'Periscope_02');
+    Mesh.AttachComponentToSocket(SceneCapture2, 'Periscope_02');
+    Mesh.GetSocketWorldLocationAndRotation('Periscope_02', SocketLocation, SocketRotation, 1);
+
+    SceneCapture2.bEnabled = True;
+    SceneCapture2.SetFrameRate(SceneCapture2.default.FrameRate);
+    SceneCapture2.SetView(SocketLocation, SocketRotation);
+
     `zmlog("SceneCapture2=" $ SceneCapture2);
+    `zmlog("SceneCapture2.bEnabled=" $ SceneCapture2.bEnabled);
+    `zmlog("SceneCapture2.Owner=" $ SceneCapture2.Owner);
+    `zmlog("SceneCapture2.TextureTarget=" $ SceneCapture2.TextureTarget);
+    `zmlog("PeriscopeTextureTarget2=" $ PeriscopeTextureTarget2);
+    `zmlog("Mesh.GetSocketByName('Periscope_02')=" $ Mesh.GetSocketByName('Periscope_02'));
+
+    // SetTimer(2.0, True, 'DebugCapture');
 }
 
+`ifdef(DEBUG)
+simulated exec function PeriscopeFOV(float NewFOV)
+{
+	SceneCapture2.SetCaptureParameters(, NewFOV);
+}
+`endif
+
+simulated function DebugCapture()
+{
+	`zmlog("SceneCapture2=" $ SceneCapture2);
+}
 
 DefaultProperties
 {
 	// ------------------------------- Mesh --------------------------------------------------------------
 
 	Begin Object Name=ROSVehicleMesh
-		SkeletalMesh=SkeletalMesh'VH_VN_Drivable_M113_APC.Mesh.US_M113_Rig_Master'
+		SkeletalMesh=SkeletalMesh'ZM_VH_Drivable_M113_APC.Mesh.US_M113_Rig_Master'
 		LightingChannels=(Dynamic=TRUE,Unnamed_1=TRUE,bInitialized=TRUE)
 		AnimTreeTemplate=AnimTree'VH_VN_ARVN_M113_APC.Anim.AT_VH_M113_APC'
 		PhysicsAsset=PhysicsAsset'VH_VN_ARVN_M113_APC.Phys.ARVN_M113_Physics'
@@ -311,12 +340,14 @@ DefaultProperties
         // bUseMainScenePostProcessSettings=true
         // bEnablePostProcess=true
         bEnableFog=True
-        bUpdateMatrices=true
+        bUpdateMatrices=True
         bRenderWorldDPG=True
         bRenderForegroundDPG=True
         TextureTarget=TextureRenderTarget2D'ZM_VH_Drivable_M113_APC.Texture.PeriscopeRT_2'
-        FieldOfView=90
+        FieldOfView=15
         // "3.5X" = 32.5 / 3.5 = 9.2857(FYI: 32.5 is our "real world" FOV on a 19" monitor
     End Object
     SceneCapture2=PeriscopeSceneCapture2
+
+    InterpParamName=mat_blend_scaler
 }

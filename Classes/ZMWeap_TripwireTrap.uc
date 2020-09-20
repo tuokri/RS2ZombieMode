@@ -11,4 +11,6 @@ DefaultProperties
 	MaxAllowedAtOnce=2
 
 	AmmoClass=class'ZMAmmo_TripwireTrap'
+
+	// bDebugWeapon=True
 }

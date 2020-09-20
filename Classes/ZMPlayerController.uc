@@ -8,6 +8,16 @@ var float   CachedSFXVolume;
 var int     CachedSFXVolumeAge;
 var int     CachedSFXVolumeMaxAge;
 
+// Bomber bomb charges.
+var array<ZMBomberBomb> BBCharges;
+var int iPlantedBBChargeCount;
+
+
+replication
+{
+    if (bNetOwner && Role == ROLE_Authority && bNetDirty)
+        iPlantedBBChargeCount;
+}
 
 function PreBeginPlay()
 {
@@ -64,6 +74,7 @@ simulated function ReceivedGameClass(class<GameInfo> GameClass)
     }
 }
 
+/*
 function float VerifyFloatModifierMin(Name ModifierName, float Modifier,
     float MinValue, float DefaultValue)
 {
@@ -75,7 +86,9 @@ function float VerifyFloatModifierMin(Name ModifierName, float Modifier,
     }
     return Modifier;
 }
+*/
 
+/*
 function VerifyConfig()
 {
     NorthReinforcementDelayModifier = VerifyFloatModifierMin(
@@ -89,6 +102,7 @@ function VerifyConfig()
     SaveConfig();
     `zmlog("Configuration verified", 'Config');
 }
+*/
 
 simulated function ReplicateModShit()
 {
@@ -145,7 +159,7 @@ simulated function OverrideMapInfo()
     ROMI.CarpetBomberStrikeLimit32 = 0;
     ROMI.CarpetBomberStrikeLimit64 = 0;
     ROMI.AntiAirCooldown = 0;
-    ROMI.InstantRespawnInterval = 30;
+    ROMI.InstantRespawnInterval = 60;
 }
 
 simulated function ReplaceRoles()
@@ -174,6 +188,10 @@ simulated function ReplaceRoles()
     RORC.Count = 8;
     ROMI.NorthernRoles.AddItem(RORC);
 
+    RORC.RoleInfoClass = class'ZMRoleInfoNorthernFlamer';
+    RORC.Count = 2;
+    ROMI.NorthernRoles.AddItem(RORC);
+
     /*
     RORC.RoleInfoClass = class'ZMRoleInfoNorthernBomber';
     RORC.Count = 4;
@@ -188,14 +206,20 @@ simulated function ReplaceRoles()
     RORC.Count = 3;
     ROMI.SouthernRoles.AddItem(RORC);
 
-    // DuckBill class.
-
     RORC.RoleInfoClass = class'ZMRoleInfoSouthernTrapper';
     RORC.Count = 4;
     ROMI.SouthernRoles.AddItem(RORC);
 
     RORC.RoleInfoClass = class'ZMRoleInfoSouthernRifleman';
     RORC.Count = 6;
+    ROMI.SouthernRoles.AddItem(RORC);
+
+    RORC.RoleInfoClass = class'ZMRoleInfoSouthernDemolitions';
+    RORC.Count = 1;
+    ROMI.SouthernRoles.AddItem(RORC);
+
+    RORC.RoleInfoClass = class'ZMRoleInfoSouthernBruiser';
+    RORC.Count = 2;
     ROMI.SouthernRoles.AddItem(RORC);
 
     /*
@@ -312,6 +336,88 @@ function InitialiseCCMs()
         if( AllCCMs[1] == none )
             AllCCMs[1] = TempCCM;
     }
+}
+
+function AddCharge(RORemoteExplosiveProjectile ChargeType)
+{
+    local ROPlantedChargeInfo ROPCI;
+
+    if (ChargeType.IsA('ZMBomberBomb'))
+    {
+        // Check to make sure we're not attempting to plant another one, if so, remove it and place the trap in a new place.
+        if (BBCharges.Length >= ChargeType.default.MaxAllowed )
+        {
+            BBCharges[0].ShutDown();
+            BBCharges.Remove(0, 1);
+
+            if(WorldInfo.NetMode != NM_Client)
+            {
+                ClientRemoveCharge(0);
+            }
+        }
+
+        BBCharges.AddItem(ZMBomberBomb(ChargeType));
+        iPlantedBBChargeCount = BBCharges.length;
+        ROPCI.ServerArrayIndex = iPlantedBBChargeCount - 1;
+
+        if (WorldInfo.NetMode != NM_Client && ChargeType.Physics == PHYS_None)
+        {
+            ROPCI.ChargeLocation = ChargeType.Location;
+            ROPCI.Icon = ChargeType.TacticalIcon;
+            ClientAddCharge(ROPCI);
+        }
+    }
+    else
+    {
+        super.AddCharge(ChargeType);
+    }
+}
+
+function RemoveCharge(ROSatchelChargeProjectile ChargeType, optional bool bTriggeredOrDisarmed)
+{
+    local int idx;
+
+    if(ChargeType.IsA('ZMBomberBomb'))
+    {
+        idx = BBCharges.Find(ZMBomberBomb(ChargeType));
+        if (idx > -1)
+        {
+            BBCharges.Remove(idx, 1);
+
+            if(WorldInfo.NetMode != NM_Client)
+            {
+                ClientRemoveCharge(idx);
+            }
+        }
+
+        iPlantedBBChargeCount = BBCharges.length;
+
+        if(WorldInfo.NetMode != NM_Client)
+        {
+            if(bTriggeredOrDisarmed)
+            {
+                ClientFlashTrapIndicator();
+            }
+        }
+    }
+    else
+    {
+        super.RemoveCharge(ChargeType, bTriggeredOrDisarmed);
+    }
+}
+
+simulated function ClearCharges()
+{
+    local int i;
+
+    for(i = 0; i < BBCharges.Length; i++)
+    {
+        BBCharges[i].Shutdown();
+    }
+    BBCharges.Remove(0, BBCharges.Length);
+    iPlantedBBChargeCount=0;
+
+    super.ClearCharges();
 }
 
 //////////////////////////////////////////////////

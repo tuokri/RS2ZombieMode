@@ -4,9 +4,9 @@ DefaultProperties
 {
     RoleType=RORIT_Scout
     ClassTier=2
-    ClassIndex=`ROCI_HEAVY // 1
+    ClassIndex=`ROCI_HEAVY // 5
 
-    bAllowPistolsInRealism=False
+    bAllowPistolsInRealism=True
 
     ClassIcon=Texture2D'VN_UI_Textures.menu.class_icon_scout'
     ClassIconLarge=Texture2D'VN_UI_Textures.menu.ProfileStats.class_icon_large_scout'

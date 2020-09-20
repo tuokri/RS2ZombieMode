@@ -1,143 +1,102 @@
-class ZMWeap_BomberBomb extends ROWeap_C4_Explosive;
+// Detonator / clacker.
+class ZMWeap_BomberBomb extends ROExplosiveWeapon;
 
-simulated function PostBeginPlay()
-{
-    `zmlog("ZMWeap_BomberBomb.PostBeginPlay()", 'Debug');
-    super.PostBeginPlay();
+/*
+var(Animations) name  ClackerIdleAnim;
+var(Animations) name  ClackerFireAnim;
+var(Animations) name  ClackerMisfireAnim;
+var(Animations) name  ClackerPutDownAnim;
+var(Animations) name  ClackerEquipAnim;
+var(Animations) name  ClackerEquipArmAnim;
+var(Animations) name  ClackerDownAnim;
+var(Animations) name  ClackerUpAnim;
+var(Animations) name  ClackerCrawlingAnim;
+var(Animations) name  ClackerCrawlStartAnim;
+var(Animations) name  ClackerCrawlEndAnim;
+var(Animations) name  ClackerSprintStartAnim;
+var(Animations) name  ClackerSprintLoopAnim;
+var(Animations) name  ClackerSprintEndAnim;
+var(Animations) name  ClackerMantleOverAnim;
+var(Animations) name  ClackerSpotEnemyAnim;
+*/
 
-    PlantACharge();
-    if (Role == ROLE_Authority)
-    {
-        ServerGrenadeWasThrown();
-    }
-
-    // SetTimer(0.1, True, 'LogLocation');
-}
-
-simulated function LogLocation()
-{
-    `zmlog("bomb location=" $ Location, 'Debug');
-}
-
-simulated function PlantACharge()
-{
-    local RORemoteExplosiveProjectile NewCharge;
-
-    // Make sure a camera shift hasn't moved our aim to somewhere that we can't plant
-    /*
-    if( !CanPlantCharge() )
-    {
-        CancelWeaponAction(true, true);
-        GotoActiveState();
-        return;
-    }
-    */
-
-    if( Role == ROLE_Authority )
-    {
-        NewCharge = RORemoteExplosiveProjectile(SpawnPlantedCharge());
-        if( NewCharge != none )
-        {
-            // PlantedCharges[NumPlantedCharges - 1].OwningWeapon = self;
-            // PlantedCharges[NumPlantedCharges - 1].SetReplicationValues(false);
-            // PlantedCharges[NumPlantedCharges - 1].SetBase(VehicleToAttach);
-            // PlantedCharges[NumPlantedCharges - 1].bPlantedOnWall = !bPlantLocIsGround;
-
-            NewCharge.OwningWeapon = self;
-            NewCharge.SetReplicationValues(false);
-            NewCharge.SetBase(Instigator);
-            NewCharge.bPlantedOnWall = false;
-
-            // if the thrower (or dropper) is dead, use our cached controller
-            if( NewCharge.InstigatorController == none )
-            {
-                NewCharge.InstigatorController = ThrowingController;
-            }
-
-            ROPlayerController(Instigator.Controller).AddCharge(NewCharge);
-
-            UpdateStoredCharges();
-
-            /*
-            if ( ThrowingBattleChatterIndex != -1 && !Instigator.bIsCrouched && !Instigator.bIsProning && !ROPawn(Instigator).IsInCover() && ROPawn(Instigator).IsMovingJogSpeed(true) )
-            {
-                ROGameInfo(WorldInfo.Game).HandleBattleChatterEvent(Instigator, ThrowingBattleChatterIndex);
-            }
-            */
-        }
-    }
-
-    if(bDebugWeapon)
-    {
-        DumpStatus("PlantACharge");
-    }
-}
-
-simulated function bool InDetonateRange(vector ChargeLocation)
-{
-    `zmlog("InDetonateRange(): self.Location=" $ self.Location
-        $ ", ChargeLocation=" $ ChargeLocation, 'Debug');
-    return True;
-}
-
-simulated function ForceCalcChargeLoc(vector HitLocation, vector HitNormal)
-{
-    local Vector X, Y, View;
-    local Rotator TempRot;
-
-    `zmlog("BOMBER_BOMB: ForceCalcChargeLoc()", 'Debug');
-
-    // Don't move with the camera!
-    if( IsInState('PlantingCharge') )
-    {
-        return;
-    }
-
-    TempRot.Yaw = Rotation.Yaw;
-
-    View = Vector(TempRot);
-    Y = HitNormal cross View;
-    X = Y cross HitNormal;
-
-    // DEBUG:
-    DrawDebugLine(HitLocation, HitLocation + 10 * X,255,0,0,false); // Red Line
-    DrawDebugLine(HitLocation, HitLocation + 10 * Y,0,255,0,false); // Green Line
-    DrawDebugLine(HitLocation, HitLocation + 10 * HitNormal,0,0,255,false); // Blue Line
-
-    ChargePlantRot = OrthoRotation(X, Y, HitNormal);
-
-    ChargePlantLoc = Instigator.Location;
-
-    ChargePlantNorm = HitNormal;
-}
+var name ChargeBoneName;
 
 DefaultProperties
 {
-    bIsPersistant=False
-    bCanBeThrown=False
-
-    Weight=0
-
-    InitialNumPrimaryMags=1
-    MaxAmmoCount=1
-
-    bDebugWeapon=True
-
     WeaponContentClass(0)="ZombieMode.ZMWeap_BomberBomb_Content"
+    RoleSelectionImage(0)=Texture2D'VN_UI_Textures.WeaponTex.US_Weap_C4'
+    InvIndex=`ROII_C4_Explosive
+    TeamIndex=`AXIS_TEAM_INDEX
+    InventoryWeight=0
 
-    // MAIN FIREMODE
-    WeaponProjectiles(0)=class'ZombieMode.ZMC4ExplosiveCharge'
-    WeaponThrowAnim(0)=C4_throw
-    WeaponIdleAnims(0)=C4_idle
-    ExplosiveBlindFireRightAnim(0)=C4_R_throw
-    ExplosiveBlindFireLeftAnim(0)=C4_L_throw
-    ExplosiveBlindFireUpAnim(0)=C4_Up_throw
+    AmmoClass=class'ZMAmmo_BomberBomb'
 
-    // ALT FIREMODE
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'ZombieMode.ZMC4ExplosiveCharge'
-    WeaponThrowAnim(ALTERNATE_FIREMODE)=C4_toss
-    WeaponIdleAnims(ALTERNATE_FIREMODE)=C4_idle
-    ExplosiveBlindFireRightAnim(ALTERNATE_FIREMODE)=C4_R_toss
-    ExplosiveBlindFireLeftAnim(ALTERNATE_FIREMODE)=C4_L_throw
-    ExplosiveBlindFireUpAnim(ALTERNATE_FIREMODE)=C4_toss
+    ChargeBoneName=C4_Explosive
+
+    MaxAmmoCount=1
+    InitialNumPrimaryMags=1
+
+    EquipTime=0.33
+    PutDownTime=0.33
+
+    WeaponIdleAnims[0]=Clacker_idle
+    WeaponIdleAnims[1]=Clacker_idle
+    WeaponPutDownAnim=Clacker_Putaway
+    WeaponEquipAnim=Clacker_Pullout
+    WeaponDownAnim=Clacker_Down
+    WeaponUpAnim=Clacker_Up
+    WeaponCrawlingAnims[0]=Clacker_CrawlF
+    WeaponCrawlStartAnim=Clacker_Crawl_into
+    WeaponCrawlEndAnim=Clacker_Crawl_out
+    WeaponSprintStartAnim=Clacker_sprint_into
+    WeaponSprintLoopAnim=Clacker_Sprint
+    WeaponSprintEndAnim=Clacker_sprint_out
+    WeaponMantleOverAnim=Clacker_Mantle
+
+    WeaponBF_Rest2LeftReady=ClackerIdleAnim
+    WeaponBF_Rest2RightReady=ClackerIdleAnim
+    WeaponBF_Rest2UpReady=ClackerIdleAnim
+    WeaponBF_LeftReady2Rest=ClackerIdleAnim
+    WeaponBF_RightReady2Rest=ClackerIdleAnim
+    WeaponBF_UpReady2Rest=ClackerIdleAnim
+    WeaponBF_LeftReady2Up=ClackerIdleAnim
+    WeaponBF_LeftReady2Right=ClackerIdleAnim
+    WeaponBF_UpReady2Left=ClackerIdleAnim
+    WeaponBF_UpReady2Right=ClackerIdleAnim
+    WeaponBF_RightReady2Up=ClackerIdleAnim
+    WeaponBF_RightReady2Left=ClackerIdleAnim
+    WeaponBF_LeftReady2Idle=ClackerIdleAnim
+    WeaponBF_RightReady2Idle=ClackerIdleAnim
+    WeaponBF_UpReady2Idle=ClackerIdleAnim
+    WeaponBF_Idle2UpReady=ClackerIdleAnim
+    WeaponBF_Idle2LeftReady=ClackerIdleAnim
+    WeaponBF_Idle2RightReady=ClackerIdleAnim
+
+    /*
+    ClackerIdleAnim=Clacker_idle
+    ClackerFireAnim=Clacker_Detonate
+    ClackerMisfireAnim=Clacker_Misfire
+    ClackerPutDownAnim=Clacker_Putaway
+    ClackerEquipAnim=Clacker_Pullout
+    ClackerEquipArmAnim=Clacker_Pullout
+    ClackerDownAnim=Clacker_Down
+    ClackerUpAnim=Clacker_Up
+
+    // Clacker Prone Crawl
+    ClackerCrawlingAnim=Clacker_CrawlF
+    ClackerCrawlStartAnim=Clacker_Crawl_into
+    ClackerCrawlEndAnim=Clacker_Crawl_out
+
+    // Clacker Sprinting
+    ClackerSprintStartAnim=Clacker_sprint_into
+    ClackerSprintLoopAnim=Clacker_Sprint
+    ClackerSprintEndAnim=Clacker_sprint_out
+
+    // Clacker Mantling
+    ClackerMantleOverAnim=Clacker_Mantle
+
+    // Enemy Spotting
+    ClackerSpotEnemyAnim=Clacker_SpotEnemy
+    */
 }

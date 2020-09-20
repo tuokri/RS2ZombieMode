@@ -105,7 +105,7 @@ simulated function OverrideMapInfo()
     ROMI.CarpetBomberStrikeLimit32 = 0;
     ROMI.CarpetBomberStrikeLimit64 = 0;
     ROMI.AntiAirCooldown = 0;
-    ROMI.InstantRespawnInterval = 30;
+    ROMI.InstantRespawnInterval = 60;
 }
 
 function VerifyConfig()

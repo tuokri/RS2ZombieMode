@@ -17,7 +17,7 @@ DefaultProperties
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
-            class'ZMWeap_TripwireTrap'),
+            class'ZombieMode.ZMWeap_TripwireTrap'),
         SquadLeaderItems=()
     )}
 
@@ -27,7 +27,7 @@ DefaultProperties
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
-            class'ZMWeap_TripwireTrap'),
+            class'ZombieMode.ZMWeap_TripwireTrap'),
         SquadLeaderItems=()
     )}
 
@@ -37,7 +37,7 @@ DefaultProperties
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
-            class'ZMWeap_TripwireTrap'),
+            class'ZombieMode.ZMWeap_TripwireTrap'),
         SquadLeaderItems=()
     )}
 
@@ -47,7 +47,7 @@ DefaultProperties
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
-            class'ZMWeap_TripwireTrap'),
+            class'ZombieMode.ZMWeap_TripwireTrap'),
         SquadLeaderItems=()
     )}
 }

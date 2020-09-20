@@ -18,7 +18,6 @@ var ParticleSystem EyeFlareTemplate;
 var AudioComponent BanzaiAudio;
 var repnotify bool bBanzaiFlag;
 
-var class<ZMBomberBomb> BomberBombClass;
 
 replication
 {
@@ -74,11 +73,11 @@ simulated event PreBeginPlay()
     ZMPlayerController(Controller).GetSFXVolumeSetting();
 }
 
+/*
 simulated event PostBeginPlay()
 {
     super.PostBeginPlay();
 
-    /*
     local vector EyeLoc;
     local rotator EyeRot;
     local ParticleSystemComponent Emitter;
@@ -92,8 +91,8 @@ simulated event PostBeginPlay()
     Emitter.bAutoActivate = True;
     Emitter.SetTemplate(EyeFlareTemplate);
     `zmlog("Emitter=" $ Emitter, 'Debug');
-    */
 }
+*/
 
 simulated event Tick(float DeltaTime)
 {
@@ -103,13 +102,6 @@ simulated event Tick(float DeltaTime)
     {
         UpdateBanzaiStatus();
     }
-}
-
-// TODO: bomb is only spawned on death (dealyed) or manual detonation (near-insant)!
-simulated function SpawnBomberBomb(class<ZMBomberBomb> ClassToSpawn)
-{
-    // BomberBombComponent.SpawnBomberBomb(ClassToSpawn);
-    // SpawnedBomb = Spawn(FirstPayloadClass, InstigatorController,, Mesh.GetBoneLocation(NapalmCanisterLeft), rotator(velocity));
 }
 
 simulated function SpawnBomberBurningEffects()
@@ -179,6 +171,9 @@ simulated function SpawnBomberBurningEffects()
             Mesh.AttachComponent(PlayerRLegBurnEffectPSC, Gore_RightLeg.ShrinkBones[0]);
         }
     }
+
+    // TODO: DeltaTime.
+    UpdateBurnMaterial(1.0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -375,6 +370,8 @@ function CheckBanzaiRadius()
     }
 }
 
+// spawnbomberbomb
+
 DefaultProperties
 {
     LegInjuryLength=0.05
@@ -387,8 +384,6 @@ DefaultProperties
     BanzaiKatanaModifier=1.2
     BanzaiStaminaModifier=0.75
     BanzaiDamageModifier=0.25
-
-    BomberBombClass=None
 
     EyeFlareTemplate=ParticleSystem'eyeflaretest.FX_VN_Flare_2'
 

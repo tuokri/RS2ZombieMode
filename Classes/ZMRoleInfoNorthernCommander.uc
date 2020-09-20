@@ -16,24 +16,25 @@ DefaultProperties
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level3'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROWeap_M34_WP')
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level3'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROWeap_M34_WP')
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level3'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROWeap_M34_WP')
+        OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(class'ZombieMode.ZMWeap_Katana_Level3'),
         SecondaryWeapons=(),
-        OtherItems=(class'ROGame.ROWeap_M34_WP')
+        // OtherItems=(class'ROGame.ROWeap_M34_WP')
+        OtherItems=()
     )}
 }

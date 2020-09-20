@@ -1,5 +1,20 @@
 class ZMWeap_BomberBomb_Content extends ZMWeap_BomberBomb;
 
+
+simulated event PostBeginPlay()
+{
+    super.PostBeginPlay();
+    HideCharge();
+}
+
+simulated protected function HideCharge()
+{
+    if (SkeletalMeshComponent(Mesh) != None)
+    {
+        SkeletalMeshComponent(Mesh).HideBoneByName(ChargeBoneName,PBO_None);
+    }
+}
+
 DefaultProperties
 {
     Begin Object Name=FirstPersonMesh

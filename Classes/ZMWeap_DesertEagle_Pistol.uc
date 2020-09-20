@@ -74,7 +74,7 @@ simulated function PlayFiringSound(byte FireModeNum)
 simulated function WeaponPlayCustomSound(SoundCue Sound, optional float NoiseLoudness)
 {
     Sound.VolumeMultiplier = ZMPlayerController(Instigator.Controller).GetSFXVolumeSetting();
-    Sound.VolumeMultiplier *= 3; // TODO: temporary.
+    Sound.VolumeMultiplier *= 5; // TODO: temporary. Find a way to tune the volume correctly.
 
     // if we are a listen server, just play the sound.  It will play locally
     // and be replicated to all other clients.
@@ -311,7 +311,7 @@ DefaultProperties
     //ShoulderedTime=0.35
     ShoulderedPosition=(X=5.0,Y=2.0,Z=-2.0)
     //ShoulderRotation=(Pitch=-300,Yaw=500,Roll=1500)
-    IronSightPosition=(X=0,Y=0,Z=-30) // Z=0
+    IronSightPosition=(X=0,Y=0,Z=30) // Z=0
 
     bUsesFreeAim=true
 
@@ -357,5 +357,5 @@ DefaultProperties
 
     SwayScale=0.9 // 0.6
 
-    bDebugWeapon=True
+    // bDebugWeapon=True
 }

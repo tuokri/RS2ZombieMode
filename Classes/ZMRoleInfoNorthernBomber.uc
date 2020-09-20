@@ -5,7 +5,6 @@ simulated function ExtraPawnModifiers(ZMNorthPawn NP)
     super.ExtraPawnModifiers(NP);
 
     NP.SpawnBomberBurningEffects();
-    NP.SpawnBomberBomb(class'ZMBomberBombHE'); // TODO: Determine correct bomb.
 }
 
 DefaultProperties
