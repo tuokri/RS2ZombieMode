@@ -41,5 +41,55 @@ MyName="FLAMER"
 MyName="BRUISER"
 
 [ZMRoleInfoSouthernDemolitions]
-MyName="DEMOLITIONS"
+MyName="DEMOMAN"
 
+
+[ZMHUD]
+AmmoUVs[66]=(AmmoDescription=".44 Magnum 8rd Box")
+AmmoUVs[68]=(AmmoDescription="Zombie Liquid Cyst")
+AmmoUVs[69]=(AmmoDescription="9x19mm 13rd Box")
+AmmoUVs[70]=(AmmoDescription="No.4 Buckshot Shell")
+
+
+[ZMWeap_M9_Flamethrower]
+DisplayName="Cyst Fluid Dispenser"
+ShortDisplayName="CFD"
+CapitalizedDisplayName="CYST FLUID DISPENSER"
+Description="Zombie Cyst Fluid Dispenser\n\nPumps highly flammable zombie cyst fluid with high pressure."
+DisplayInfo[0]=(WeaponSpecialAttributesText=("Deflects off Walls"))
+
+[ZMWeap_DesertEagle_Pistol]
+DisplayName="Desert Eagle .44 Magnum"
+ShortDisplayName="Desert Eagle"
+CapitalizedDisplayName="DESERT EAGLE .44 MAGNUM"
+Description="Handgun, .44 Magnum, Desert Eagle\n\nHandcannon. I'll write a better description later."
+
+[ZMWeap_DesertEagle_Gold_Pistol]
+DisplayName="Desert Eagle .44 Magnum Gold"
+ShortDisplayName="Desert Eagle Gold"
+CapitalizedDisplayName="DESERT EAGLE .44 MAGNUM GOLD"
+Description="Handgun, .44 Magnum, Desert Eagle\n\nHandcannon with a golden finish. I'll write a better description later."
+
+[ZMWeap_Katana]
+DisplayName="Katana"
+ShortDisplayName="Katana"
+CapitalizedDisplayName="KATANA"
+Description="Japanese Officers and NCOs were equipped with the 'shin gunto'."
+
+[ZMWeap_Katana_Level2]
+DisplayName="Katana"
+ShortDisplayName="Katana"
+CapitalizedDisplayName="KATANA"
+Description="Japanese Officers and NCOs were equipped with the 'shin gunto'."
+
+[ZMWeap_Katana_Level3]
+DisplayName="Katana"
+ShortDisplayName="Katana"
+CapitalizedDisplayName="KATANA"
+Description="Japanese Officers and NCOs were equipped with the 'shin gunto'."
+
+[ZMWeap_Katana_Secondary_Level2]
+DisplayName="Katana"
+ShortDisplayName="Katana"
+CapitalizedDisplayName="KATANA"
+Description="Japanese Officers and NCOs were equipped with the 'shin gunto'."
