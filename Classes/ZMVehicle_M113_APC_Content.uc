@@ -37,6 +37,7 @@ simulated event PostBeginPlay()
     // SetTimer(2.0, True, 'DebugCapture');
 }
 
+/*
 `ifdef(DEBUG)
 simulated exec function PeriscopeFOV(float NewFOV)
 {
@@ -48,6 +49,7 @@ simulated function DebugCapture()
 {
 	`zmlog("SceneCapture2=" $ SceneCapture2);
 }
+*/
 
 DefaultProperties
 {

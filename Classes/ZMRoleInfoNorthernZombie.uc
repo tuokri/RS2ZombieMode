@@ -1,9 +1,11 @@
 class ZMRoleInfoNorthernZombie extends ZMRoleInfoNorthernInfantry;
 
+/*
 simulated function ExtraPawnModifiers(ZMNorthPawn NP)
 {
     super.ExtraPawnModifiers(NP);
 }
+*/
 
 DefaultProperties
 {

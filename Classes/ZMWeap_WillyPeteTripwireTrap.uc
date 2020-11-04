@@ -1,5 +1,13 @@
-class ZMWeap_TripwireTrap extends ROPlantableTrapWeapon
-	abstract;
+//=============================================================================
+// Willy Pete Tripwire Trap
+//=============================================================================
+// Trap for south side to kill zombies
+//=============================================================================
+// Zombie mode for Rising Storm 2: Vietnam
+// weapon finished by adrian! 
+//=============================================================================
+
+class ZMWeap_WillyPeteTripwireTrap extends ROPlantableTrapWeapon;
 
 var class<TripwireTrapStake>		TrapStakeClass;
 
@@ -576,15 +584,16 @@ simulated function CancelWeaponAction(optional bool bAnimate, optional bool bRep
 	Super.CancelWeaponAction(bAnimate, bReplicateToServer);
 }
 
-DefaultProperties
+defaultproperties
 {
-	WeaponContentClass(0)="ZombieMode.ZMWeap_TripwireTrap_Content"
+	WeaponContentClass(0)"ZombieMode.ZMWeap_TripwireTrap_Content"
+
 	RoleSelectionImage(0)=Texture2D'VN_UI_Textures.WeaponTex.VN_Weap_TripwireTrap'
 
 	TeamIndex=`ALLIES_TEAM_INDEX
 	WeaponClassType=ROWCT_BoobyTrap
 
-	InvIndex=`ZMII_TripwireTrap
+	InvIndex=`ROII_TripwireTrap
 	InventoryWeight=0
 
 	PlayerViewOffset=(X=5,Y=4.5,Z=-1.75)
@@ -649,9 +658,9 @@ DefaultProperties
 	// Enemy Spotting
 	WeaponSpotEnemyAnim=TW01_SpotEnemy
 
-	AmmoClass=class'ZMAmmo_TripwireTrap'
-	TrapClass=class'TripwireTrap'
-	// TrapClass=class'WilliePeteTripwireTrap'
+	AmmoClass=class'ZMAmmo_WilliePeteTripwireTrap'
+	//TrapClass=class'TripwireTrap'
+	TrapClass=class'ZMWilliePeteTripwireTrap'
 	TrapStakeClass=class'TripwireTrapStake'
 
 	// MAIN FIREMODE
@@ -703,4 +712,7 @@ DefaultProperties
 
 	EquipTime=+0.33 //0.35
 
-}
+
+	
+	
+	// bDebugWeapon=True

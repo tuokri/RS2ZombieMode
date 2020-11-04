@@ -12,28 +12,36 @@ DefaultProperties
     ClassIconLarge=Texture2D'VN_UI_Textures.menu.ProfileStats.class_icon_large_grunt'
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
+        PrimaryWeapons=(
+            class'ROGame.ROWeap_M1Garand_Rifle',
+            class'ROGame.ROWeap_SKS_Rifle'),
         SecondaryWeapons=(),
         SquadLeaderItems=(),
         OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
-        PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
+        PrimaryWeapons=(
+            class'ROGame.ROWeap_M1Garand_Rifle',,
+            class'ROGame.ROWeap_SKS_Rifle'),
         SecondaryWeapons=(),
         SquadLeaderItems=(),
         OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
-        PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
+        PrimaryWeapons=(
+            class'ROGame.ROWeap_M1Garand_Rifle',,
+            class'ROGame.ROWeap_SKS_Rifle'),
         SecondaryWeapons=(),
         SquadLeaderItems=(),
         OtherItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
-        PrimaryWeapons=(class'ROGame.ROWeap_SKS_Rifle'),
+        PrimaryWeapons=(
+            class'ROGame.ROWeap_M1Garand_Rifle',,
+            class'ROGame.ROWeap_SKS_Rifle'),
         SecondaryWeapons=(),
         SquadLeaderItems=(),
         OtherItems=()

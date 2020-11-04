@@ -13,10 +13,25 @@ var bool    bOldBanzai;                 // Banzai status in a previous tick.
 var bool    bTerrorSuppressed;
 var bool    bCanBanzaiCharge;
 
-var ParticleSystem EyeFlareTemplate;
+var ParticleSystemComponent PlayerFlamerTorsoBurnEffectPSC;
+var ParticleSystemComponent PlayerFlamerLArmBurnEffectPSC;
+var ParticleSystemComponent PlayerFlamerRArmBurnEffectPSC;
+var ParticleSystemComponent PlayerFlamerLLegBurnEffectPSC;
+var ParticleSystemComponent PlayerFlamerRLegBurnEffectPSC;
+var ParticleSystem          PlayerFlamerTorsoBurnTemplate;
+var ParticleSystem          PlayerFlamerArmBurnTemplate;
+var ParticleSystem          PlayerFlamerLegBurnTemplate;
+
+// var ParticleSystem EyeFlareTemplate;
 
 var AudioComponent BanzaiAudio;
 var repnotify bool bBanzaiFlag;
+
+var float BurnGlowDeltaTime;
+var float BurnGlowDeltaTimeUpdate;
+var float BurnGlowStep;
+
+var repnotify bool bShowFlamerBurningEffects;
 
 
 replication
@@ -25,7 +40,7 @@ replication
         bTerrorSuppressed;
 
     if (Role == ROLE_Authority && bNetDirty)
-        bInBanzai;
+        bInBanzai, bShowFlamerBurningEffects;
 
     if (Role == ROLE_Authority && bNetDirty && bNetOwner)
         NumberOfBanzaiChargers;
@@ -42,6 +57,10 @@ simulated event ReplicatedEvent(Name VarName)
     {
         CustomPlaySound(bBanzaiFlag);
     }
+    else if (VarName == 'bShowFlamerBurningEffects')
+    {
+        SpawnFlamerBurningEffects();
+    }
 }
 
 simulated function CustomPlaySound(bool bShouldPlayAudio)
@@ -53,7 +72,12 @@ simulated function CustomPlaySound(bool bShouldPlayAudio)
 
     if (bShouldPlayAudio)
     {
-        BanzaiAudio.VolumeMultiplier = ZMPlayerController(Controller).GetSFXVolumeSetting();
+        /*
+        if (ZMPlayerController(Controller) != None)
+        {
+            BanzaiAudio.VolumeMultiplier = ZMPlayerController(Controller).GetSFXVolumeSetting();
+        }
+        */
         BanzaiAudio.Play();
     }
     /*
@@ -70,7 +94,7 @@ simulated event PreBeginPlay()
 
     super.PreBeginPlay();
 
-    ZMPlayerController(Controller).GetSFXVolumeSetting();
+    // ZMPlayerController(Controller).GetSFXVolumeSetting();
 }
 
 /*
@@ -94,6 +118,18 @@ simulated event PostBeginPlay()
 }
 */
 
+/*
+simulated event PostBeginPlay()
+{
+    local ZMPlayerController ZMPC;
+
+    super.PostBeginPlay();
+
+    ZMPC = ZMPlayerController(Controller);
+    ZMPC.myROHUD.OverheadMapWidget.Initialize(ZMPC);
+}
+*/
+
 simulated event Tick(float DeltaTime)
 {
     super.Tick(DeltaTime);
@@ -107,6 +143,10 @@ simulated event Tick(float DeltaTime)
 simulated function SpawnBomberBurningEffects()
 {
     local int BoneIndex;
+
+    ClearTimer('BurnGlowLoop');
+    BurnGlowDeltaTime = 0.0;
+    BurnGlowDeltaTimeUpdate = 0.1;
 
     if( PlayerTorsoBurnTemplate != None && PlayerTorsoBurnEffectPSC == None)
     {
@@ -172,8 +212,125 @@ simulated function SpawnBomberBurningEffects()
         }
     }
 
-    // TODO: DeltaTime.
-    UpdateBurnMaterial(1.0);
+    SetTimer(BurnGlowStep, True, 'BurnGlowLoop');
+}
+
+simulated function SpawnFlamerBurningEffects()
+{
+    local int BoneIndex;
+    local int i;
+    local LinearColor GreenFire;
+
+    // Perhaps unnecessary safety check?
+    if (!bShowFlamerBurningEffects)
+    {
+        return;
+    }
+
+    ClearTimer('BurnGlowLoop');
+    BurnGlowDeltaTime = 0.0;
+    BurnGlowDeltaTimeUpdate = 0.1;
+
+    GreenFire.R = 0.049506;
+    GreenFire.G = 1.0;
+    GreenFire.B = 0.0;
+    GreenFire.A = 1.0;
+
+    HeadAndArmsMIC.SetVectorParameterValue('FireColour', GreenFire);
+    HeadgearMIC.SetVectorParameterValue('FireColour', GreenFire);
+
+    for (i = 0; i < MeshMICs.Length; i++)
+    {
+        MeshMICs[i].SetVectorParameterValue('FireColour', GreenFire);
+    }
+
+    if( PlayerFlamerTorsoBurnTemplate != None && PlayerFlamerTorsoBurnEffectPSC == None)
+    {
+        PlayerFlamerTorsoBurnEffectPSC = WorldInfo.MyEmitterPool.SpawnEmitterCustomLifetime(PlayerFlamerTorsoBurnTemplate);
+        PlayerFlamerTorsoBurnEffectPSC.SetAbsolute(False, False, False);
+        PlayerFlamerTorsoBurnEffectPSC.SetLODLevel(WorldInfo.bDropDetail ? 1 : 0);
+        PlayerFlamerTorsoBurnEffectPSC.OnSystemFinished = MyOnParticleSystemFinished;
+        PlayerFlamerTorsoBurnEffectPSC.bUpdateComponentInTick = False;
+        Mesh.AttachComponentToSocket(PlayerFlamerTorsoBurnEffectPSC, TorsoSocketName);
+    }
+
+    if( PlayerFlamerArmBurnTemplate != None && PlayerFlamerLArmBurnEffectPSC == None)
+    {
+        BoneIndex = Mesh.MatchRefBone(Gore_LeftHand.ShrinkBones[0]);
+
+        if( BoneIndex != -1 && !Mesh.IsBoneHidden(BoneIndex) )
+        {
+            PlayerFlamerLArmBurnEffectPSC = WorldInfo.MyEmitterPool.SpawnEmitterCustomLifetime(PlayerFlamerArmBurnTemplate);
+            PlayerFlamerLArmBurnEffectPSC.SetAbsolute(False, False, False);
+            PlayerFlamerLArmBurnEffectPSC.SetLODLevel(WorldInfo.bDropDetail ? 1 : 0);
+            PlayerFlamerLArmBurnEffectPSC.OnSystemFinished = MyOnParticleSystemFinished;
+            PlayerFlamerLArmBurnEffectPSC.bUpdateComponentInTick = False;
+            Mesh.AttachComponent(PlayerFlamerLArmBurnEffectPSC, Gore_LeftHand.ShrinkBones[0]);
+        }
+
+        BoneIndex = Mesh.MatchRefBone(Gore_RightHand.ShrinkBones[0]);
+
+        if( BoneIndex != -1 && !Mesh.IsBoneHidden(BoneIndex) )
+        {
+            PlayerFlamerRArmBurnEffectPSC = WorldInfo.MyEmitterPool.SpawnEmitterCustomLifetime(PlayerFlamerArmBurnTemplate);
+            PlayerFlamerRArmBurnEffectPSC.SetAbsolute(False, False, False);
+            PlayerFlamerRArmBurnEffectPSC.SetLODLevel(WorldInfo.bDropDetail ? 1 : 0);
+            PlayerFlamerRArmBurnEffectPSC.OnSystemFinished = MyOnParticleSystemFinished;
+            PlayerFlamerRArmBurnEffectPSC.bUpdateComponentInTick = False;
+            Mesh.AttachComponent(PlayerFlamerRArmBurnEffectPSC, Gore_RightHand.ShrinkBones[0]);
+        }
+    }
+
+    if( PlayerFlamerLegBurnTemplate != None && PlayerFlamerLLegBurnEffectPSC == None)
+    {
+        BoneIndex = Mesh.MatchRefBone(Gore_LeftLeg.ShrinkBones[0]);
+
+        if( BoneIndex != -1 && !Mesh.IsBoneHidden(BoneIndex) )
+        {
+            PlayerFlamerLLegBurnEffectPSC = WorldInfo.MyEmitterPool.SpawnEmitterCustomLifetime(PlayerFlamerLegBurnTemplate);
+            PlayerFlamerLLegBurnEffectPSC.SetAbsolute(False, False, False);
+            PlayerFlamerLLegBurnEffectPSC.SetLODLevel(WorldInfo.bDropDetail ? 1 : 0);
+            PlayerFlamerLLegBurnEffectPSC.OnSystemFinished = MyOnParticleSystemFinished;
+            PlayerFlamerLLegBurnEffectPSC.bUpdateComponentInTick = False;
+            Mesh.AttachComponent(PlayerFlamerLLegBurnEffectPSC, Gore_LeftLeg.ShrinkBones[0]);
+        }
+
+        BoneIndex = Mesh.MatchRefBone(Gore_RightLeg.ShrinkBones[0]);
+
+        if( BoneIndex != -1 && !Mesh.IsBoneHidden(BoneIndex) )
+        {
+            PlayerFlamerRLegBurnEffectPSC = WorldInfo.MyEmitterPool.SpawnEmitterCustomLifetime(PlayerFlamerLegBurnTemplate);
+            PlayerFlamerRLegBurnEffectPSC.SetAbsolute(False, False, False);
+            PlayerFlamerRLegBurnEffectPSC.SetLODLevel(WorldInfo.bDropDetail ? 1 : 0);
+            PlayerFlamerRLegBurnEffectPSC.OnSystemFinished = MyOnParticleSystemFinished;
+            PlayerFlamerRLegBurnEffectPSC.bUpdateComponentInTick = False;
+            Mesh.AttachComponent(PlayerFlamerRLegBurnEffectPSC, Gore_RightLeg.ShrinkBones[0]);
+        }
+    }
+
+    SetTimer(BurnGlowStep, True, 'BurnGlowLoop');
+}
+
+// "Sinusoid" delta time loop.
+simulated function BurnGlowLoop()
+{
+    BurnGlowDeltaTime += BurnGlowDeltaTimeUpdate;
+    BurnGlowDeltaTime = FClamp(BurnGlowDeltaTime, 0.1, 1.0);
+
+    if (BurnGlowDeltaTime >= 1.0)
+    {
+        BurnGlowDeltaTimeUpdate = -BurnGlowStep;
+    }
+    else if (BurnGlowDeltaTime <= 0.1)
+    {
+        BurnGlowDeltaTimeUpdate = BurnGlowStep;
+    }
+
+    UpdateBurnMaterial(BurnGlowDeltaTimeUpdate);
+    // `zmlog("BurnGlowDeltaTime       = " $ BurnGlowDeltaTime, 'Debug');
+    // `zmlog("BurnGlowDeltaTimeUpdate = " $ BurnGlowDeltaTimeUpdate, 'Debug');
+    // `zmlog("BurnProgress            = " $ BurnProgress, 'Debug');
+    // `zmlog("GlowProgress            = " $ GlowProgress, 'Debug');
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +349,7 @@ function UpdateBanzaiStatus()
         // If we just started banzaiing, turn off hints.
         if (bInBanzai)
         {
-            `zmlog("Pawn=" $ self $ ", bInBanzai=" $ bInBanzai);
+            // `zmlog("Pawn=" $ self $ ", bInBanzai=" $ bInBanzai);
 
             ZMPC = ZMPlayerController(Controller);
             if (ZMPC != None)
@@ -374,6 +531,9 @@ function CheckBanzaiRadius()
 
 DefaultProperties
 {
+    // Initially False.
+    bShowFlamerBurningEffects=False
+
     LegInjuryLength=0.05
 
     bCanPickupInventory=False
@@ -385,10 +545,11 @@ DefaultProperties
     BanzaiStaminaModifier=0.75
     BanzaiDamageModifier=0.25
 
-    EyeFlareTemplate=ParticleSystem'eyeflaretest.FX_VN_Flare_2'
+    // EyeFlareTemplate=ParticleSystem'eyeflaretest.FX_VN_Flare_2'
 
     Begin Object Class=AudioComponent Name=BanzaiAudioComponent
         SoundCue=SoundCue'ZM_AUD_RS_VOX_Chatter_JapNat.Infantry.ACT_INF_Charging_NOR_Cue_01'
+        VolumeMultiplier=0.3
     End Object
     BanzaiAudio=BanzaiAudioComponent
     Components.Add(BanzaiAudioComponent)
@@ -401,4 +562,10 @@ DefaultProperties
     STAMINA_DRAIN_JUMP = 8.0;
     STAMINA_JUMP_SPEED_PENALTY = 0.2;
     STAMINA_STANDSTILL_REGEN_MOD = 3.0;
+
+    BurnGlowStep=0.05
+
+    PlayerFlamerTorsoBurnTemplate=ParticleSystem'ZM_FX_RS_Fire.Emitters.Fire_Player_Torso_NEW'
+    PlayerFlamerArmBurnTemplate=ParticleSystem'ZM_FX_RS_Fire.Emitters.Fire_Player_Arms_NEW'
+    PlayerFlamerLegBurnTemplate=ParticleSystem'ZM_FX_RS_Fire.Emitters.Fire_Player_Legs_NEW'
 }

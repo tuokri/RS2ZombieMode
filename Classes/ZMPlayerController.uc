@@ -8,18 +8,25 @@ var float   CachedSFXVolume;
 var int     CachedSFXVolumeAge;
 var int     CachedSFXVolumeMaxAge;
 
+var class<HUD> ZMHUDType;
+
+var int OverheadMapDelayedInitDone;
+
+/*
 // Bomber bomb charges.
 var array<ZMBomberBomb> BBCharges;
 var int iPlantedBBChargeCount;
+*/
 
-
+/*
 replication
 {
     if (bNetOwner && Role == ROLE_Authority && bNetDirty)
         iPlantedBBChargeCount;
 }
+*/
 
-function PreBeginPlay()
+simulated function PreBeginPlay()
 {
     super.PreBeginPlay();
 
@@ -27,19 +34,88 @@ function PreBeginPlay()
     {
         ReplicateModShit();
     }
+
+    if (Role < ROLE_Authority)
+    {
+        SetTimer(1.5, True, 'UpdateSFXVolume');
+    }
 }
 
-simulated function float GetSFXVolumeSetting()
+/*
+simulated function PostBeginPlay()
+{
+    super.PostBeginPlay();
+    SetTimer(10.0, False, 'DelayedOverheadWidgetInit');
+}
+*/
+
+exec function ShowOverheadMap()
+{
+    //if (OverheadMapDelayedInitDone < 15)
+    //{
+        if (Role != ROLE_Authority)
+        {
+            DelayedOverheadWidgetInit();
+        }
+    //}
+
+    super.ShowOverheadMap();
+}
+
+simulated function DelayedOverheadWidgetInit()
+{
+    `zmlog("DelayedOverheadWidgetInit", 'HUD');
+    myROHUD.OverheadMapWidget.Initialize(Self);
+    myROHUD.OverheadMapWidget.InitializeObjectives();
+    myROHUD.OverheadMapWidget.UpdateSpawnProtections(ROGameReplicationInfo(WorldInfo.GRI));
+    myROHUD.OverheadMapWidget.UpdateMapBoundaries(ROGameReplicationInfo(WorldInfo.GRI));
+    OverheadMapDelayedInitDone++;
+}
+
+function UpdateSFXVolume()
+{
+    local AudioComponent AC;
+    local float NewSFXVolume;
+    local ZMNorthPawn NP;
+    local ZMSouthPawn SP;
+
+    NewSFXVolume = GetSFXVolumeSetting();
+
+    // `zmlog("CachedSFXVolume = " $ CachedSFXVolume);
+    // `zmlog("NewSFXVolume    = " $ NewSFXVolume);
+
+    if (!(CachedSFXVolume ~= NewSFXVolume))
+    {
+        // `zmlog("adjusting ZMNorthPawn volume...", 'Debug');
+        foreach AllActors(class'ZMNorthPawn', NP)
+        {
+            `zmlog("finding ACs for NP=" $ NP, 'Debug');
+            foreach NP.ComponentList(class'AudioComponent', AC)
+            {
+                // `zmlog("adjusting volume for: NP=" $ NP $ ", AC=" $ AC
+                //     $ ", NewSFXVolume=" $ NewSFXVolume, 'Debug');
+                AC.VolumeMultiplier = NewSFXVolume;
+            }
+        }
+
+        // `zmlog("adjusting ZMSouthPawn volume...", 'Debug');
+        foreach AllActors(class'ZMSouthPawn', SP)
+        {
+            // `zmlog("finding ACs for SP=" $ SP, 'Debug');
+            foreach SP.ComponentList(class'AudioComponent', AC)
+            {
+                // `zmlog("adjusting volume for: SP=" $ SP $ ", AC=" $ AC
+                //     $ ", NewSFXVolume=" $ NewSFXVolume, 'Debug');
+                AC.VolumeMultiplier = NewSFXVolume;
+            }
+        }
+    }
+}
+
+function float GetSFXVolumeSetting()
 {
     local AudioDevice Audio;
     local float TimeSeconds;
-
-    /* TODO: Do we need to run this on server?
-    if (Role > ROLE_Authority)
-    {
-        return CachedSFXVolume;
-    }
-    */
 
     TimeSeconds = WorldInfo.TimeSeconds;
     if (TimeSeconds > (CachedSFXVolumeAge + CachedSFXVolumeMaxAge))
@@ -50,12 +126,16 @@ simulated function float GetSFXVolumeSetting()
             CachedSFXVolume = Audio.AKSFXVolume * Audio.AKMasterVolume;
             CachedSFXVolumeAge = TimeSeconds;
 
+            /*
             `zmlog("Audio.AKSFXVolume=    " $ Audio.AKSFXVolume);
             `zmlog("Audio.AKMasterVolume= " $ Audio.AKMasterVolume);
+            */
 
+            /*
             `zmlog("Fetching SFX volume= " $ CachedSFXVolume $ ", WorldInfo.TimeSeconds="
                 $ WorldInfo.TimeSeconds $ ", CachedSFXVolumeAge + CachedSFXVolumeMaxAge="
                 $ CachedSFXVolumeAge + CachedSFXVolumeMaxAge, 'Debug');
+            */
         }
     }
 
@@ -106,8 +186,84 @@ function VerifyConfig()
 
 simulated function ReplicateModShit()
 {
-    ReplaceRoles();
+    OverrideGameInfo();
     OverrideMapInfo();
+    ReplaceRoles();
+    DestroyPickupFactories();
+}
+
+simulated function OverrideGameInfo()
+{
+    local ROGameInfo ROGI;
+    local ROMapInfo ROMI;
+    local ROPlayerReplicationInfo ROPRI;
+
+    `zmlog("ZMPlayerController.OverrideGameInfo()", 'Debug');
+
+    ROGI = ROGameInfo(WorldInfo.Game);
+    if (ROGI.HUDType != ZMHUDType)
+    {
+        `zmlog("ZMPlayerController: ROGI.HUDType = " $ ROGI.HUDType);
+        ROGI.HUDType = ZMHUDType;
+        ROGameInfoTerritories(ROGI).HUDType = ZMHUDType;
+        `zmlog("ZMPlayerController: (after set) ROGI.HUDType = " $ ROGI.HUDType);
+    }
+
+    ROMI = ROMapInfo(WorldInfo.GetMapInfo());
+
+    `zmlog("ZMPlayerController.OverrideGameInfo(): ROGI.DefendingTeam= " $ ROGI.DefendingTeam);
+    `zmlog("ZMPlayerController.OverrideGameInfo(): ROMI.DefendingTeam= " $ ROMI.DefendingTeam);
+
+    if (ROMI.DefendingTeam == DT_North)
+    {
+        `zmlog("ZMPlayerController.OverrideGameInfo(): Reversing teams and roles", 'Debug');
+        ROMI.DefendingTeam = DT_South;
+        ROMI.DefendingTeam16 = DT_South;
+        ROMI.DefendingTeam32 = DT_South;
+        ROMI.DefendingTeam64 = DT_South;
+        ROGI.bReverseRolesAndSpawns = True;
+        ROMI.InitRolesForGametype(WorldInfo.Game.Class, ROGI.MaxPlayers, True);
+        ROGameReplicationInfo(WorldInfo.Game.GameReplicationInfo).bReverseRolesAndSpawns = True;
+        ROGI.DefendingTeam = DT_South;
+    }
+    else
+    {
+        ROMI.InitRolesForGametype(WorldInfo.Game.Class, ROGI.MaxPlayers, False);
+    }
+
+    ClientSetHUD(ZMHUDType);
+    `zmlog("ZMPlayerController.ClientSetHUD() to " $ ZMHUDType, 'Debug');
+
+    ROPRI = ROPlayerReplicationInfo(PlayerReplicationInfo);
+    myROHUD.SetUpGameTypeHUD();
+    myROHUD.SetupCommsWidgets(ROPRI.RoleInfo, True);
+    myROHUD.SetupObjectiveOverview(False);
+    // myROHUD.OverheadMapWidget.Initialize(Self);
+    // myROHUD.OverheadMapWidget.UpdateWidget();
+    myROHUD.ShowAllTemporarilyHiddenHUDWidgets();
+
+    ROGI.Reset();
+}
+
+simulated function DestroyPickupFactories()
+{
+    local PickupFactory PF;
+    local int Count;
+
+    `zmlog("ZMPlayerController: Destroying pickup factories", 'Pickups');
+
+    foreach AllActors(class'PickupFactory', PF)
+    {
+        PF.bPickupHidden = True;
+        PF.ShutDown();
+        PF.Destroy();
+        ++Count;
+    }
+
+    if (Count > 0)
+    {
+        `zmlog("Destroyed " $ Count $ " pickup factories", 'Pickups');
+    }
 }
 
 simulated function OverrideMapInfo()
@@ -131,12 +287,8 @@ simulated function OverrideMapInfo()
     `zmlog("AlliesReinforcementDelay64=" $ ROMI.AlliesReinforcementDelay64, 'Debug');
 
     ROMI.MinimumTimeDead = 0;
-    ROMI.ScoutReconInterval = 0;
-    ROMI.AerialReconInterval = 0;
-    ROMI.DefendingTeam = DT_South;
-    ROMI.DefendingTeam16 = DT_South;
-    ROMI.DefendingTeam32 = DT_South;
-    ROMI.DefendingTeam64 = DT_South;
+    ROMI.ScoutReconInterval = 300;
+    ROMI.AerialReconInterval = 300;
     ROMI.AxisReinforcementCount16 *= 1.5;
     ROMI.AxisReinforcementCount32 *= 1.5;
     ROMI.AxisReinforcementCount64 *= 1.5;
@@ -173,7 +325,6 @@ simulated function ReplaceRoles()
     ROMI.SouthernRoles.Remove(0, ROMI.SouthernRoles.Length);
 
     ROMI.NorthernTeamLeader.RoleInfo = new class'ZMRoleInfoNorthernCommander';
-    // ROMI.SouthernTeamLeader.RoleInfo = None;
     ROMI.SouthernTeamLeader.RoleInfo = new class'ZMRoleInfoSouthernCommander';
 
     RORC.RoleInfoClass = class'ZMRoleInfoNorthernZombie';
@@ -338,6 +489,7 @@ function InitialiseCCMs()
     }
 }
 
+/*
 function AddCharge(RORemoteExplosiveProjectile ChargeType)
 {
     local ROPlantedChargeInfo ROPCI;
@@ -372,7 +524,9 @@ function AddCharge(RORemoteExplosiveProjectile ChargeType)
         super.AddCharge(ChargeType);
     }
 }
+*/
 
+/*
 function RemoveCharge(ROSatchelChargeProjectile ChargeType, optional bool bTriggeredOrDisarmed)
 {
     local int idx;
@@ -405,7 +559,9 @@ function RemoveCharge(ROSatchelChargeProjectile ChargeType, optional bool bTrigg
         super.RemoveCharge(ChargeType, bTriggeredOrDisarmed);
     }
 }
+*/
 
+/*
 simulated function ClearCharges()
 {
     local int i;
@@ -419,10 +575,45 @@ simulated function ClearCharges()
 
     super.ClearCharges();
 }
+*/
+
+/*
+function SpawnDefaultHUD()
+{
+    local ZMPlayerReplicationInfo ZMPRI;
+
+    super.SpawnDefaultHUD();
+
+    if (LocalPlayer(Player) == None)
+    {
+        return;
+    }
+
+    ZMPRI = ZMPlayerReplicationInfo(PlayerReplicationInfo);
+
+    if (myHUD != None)
+    {
+        myROHUD = ZMHUD(myHUD);
+
+        // Give the player the proper orders widget (or remove it if they shouldn't have it)
+        if(ZMPRI != None)
+        {
+            myROHUD.SetupCommsWidgets(ZMPRI.RoleInfo, bIsBotCommander);
+        }
+    }
+}
+*/
+
+reliable client function ClientSetHUD(class<HUD> newHUDType)
+{
+    `zmlog("ZMPlayerController.ClientSetHUD() with newHUDType = " $ newHUDType);
+    super.ClientSetHUD(newHUDType);
+}
 
 //////////////////////////////////////////////////
 // DEBUG
 //////////////////////////////////////////////////
+
 
 `ifdef(DEBUG)
 
@@ -473,15 +664,20 @@ reliable server function ServerCamera( name NewMode )
 
 `endif
 
+
 //////////////////////////////////////////////////
 // DEBUG END
 //////////////////////////////////////////////////
 
 DefaultProperties
 {
+    ZMHUDType=class'ZombieMode.ZMHUD'
+
     CachedSFXVolume=0.2
     CachedSFXVolumeMaxAge=2 // Seconds.
 
     NorthReinforcementDelayModifier=`NORTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT
     SouthReinforcementDelayModifier=`SOUTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT
+
+    OverheadMapDelayedInitDone=0
 }

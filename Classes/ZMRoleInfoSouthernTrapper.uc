@@ -3,7 +3,7 @@ class ZMRoleInfoSouthernTrapper extends ZMRoleInfoSouthernInfantry;
 DefaultProperties
 {
     RoleType=RORIT_Marksman
-    ClassTier=3
+    ClassTier=4
     ClassIndex=`ROCI_SNIPER //3
 
     bAllowPistolsInRealism=True
@@ -13,7 +13,9 @@ DefaultProperties
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'ROGame.ROWeap_MN9130_Rifle'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
+        SecondaryWeapons=(
+            class'ROGame.ROWeap_PM_Pistol',
+            class'ROGame.ROWeap_TT33_Pistol'),
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
@@ -23,7 +25,9 @@ DefaultProperties
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(class'ROGame.ROWeap_MN9130_Rifle'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
+        SecondaryWeapons=(
+            class'ROGame.ROWeap_PM_Pistol',
+            class'ROGame.ROWeap_TT33_Pistol'),
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
@@ -33,7 +37,9 @@ DefaultProperties
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(class'ROGame.ROWeap_MN9130_Rifle'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
+        SecondaryWeapons=(
+            class'ROGame.ROWeap_PM_Pistol',
+            class'ROGame.ROWeap_TT33_Pistol'),
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',
@@ -43,7 +49,9 @@ DefaultProperties
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(class'ROGame.ROWeap_MN9130_Rifle'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
+        SecondaryWeapons=(
+            class'ROGame.ROWeap_PM_Pistol',
+            class'ROGame.ROWeap_TT33_Pistol'),
         OtherItems=(
             class'ROGame.ROWeap_M18_Claymore',
             class'ZombieMode.ZMWeap_MD82_Mine',

@@ -46,7 +46,7 @@ DefaultProperties
     End Object
     */
 
-    AttachmentClass=class'ROGameContent.ROWeapAttach_C4_Explosive'
+    AttachmentClass=class'ZombieMode.ZMWeapAttach_BomberBomb'
 
     ArmsAnimSet=AnimSet'WP_VN_USA_C4.Animation.WP_C4hands'
 }

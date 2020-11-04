@@ -13,28 +13,28 @@ DefaultProperties
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'ROGame.ROWeap_M79_GrenadeLauncher'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
+        SecondaryWeapons=(class'ROGame.ROWeap_M1917_Pistol'),
         OtherItems=(class'ROGame.ROWeap_M34_WP', class'ROGame.ROWeap_M61_Grenade'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(class'ROGame.ROWeap_M79_GrenadeLauncher'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
+        SecondaryWeapons=(class'ROGame.ROWeap_M1917_Pistol'),
         OtherItems=(class'ROGame.ROWeap_M34_WP', class'ROGame.ROWeap_M61_Grenade'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(class'ROGame.ROWeap_M79_GrenadeLauncher'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
+        SecondaryWeapons=(class'ROGame.ROWeap_M1917_Pistol'),
         OtherItems=(class'ROGame.ROWeap_M34_WP', class'ROGame.ROWeap_M61_Grenade'),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(class'ROGame.ROWeap_M79_GrenadeLauncher'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_BHP_Pistol'),
+        SecondaryWeapons=(class'ROGame.ROWeap_M1917_Pistol'),
         OtherItems=(class'ROGame.ROWeap_M34_WP', class'ROGame.ROWeap_M61_Grenade'),
         SquadLeaderItems=()
     )}

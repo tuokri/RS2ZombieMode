@@ -6,8 +6,8 @@ simulated function ExtraPawnModifiers(ZMNorthPawn NP)
 
     NP.Jumpz *= 3;
     NP.MaxFallSpeed *= 3;
-    NP.AirControl *= 5;
-    NP.AirSpeed *= 3;
+    NP.AirControl *= 10;
+    NP.AirSpeed *= 4;
 }
 
 DefaultProperties
