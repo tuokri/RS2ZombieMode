@@ -37,7 +37,7 @@ DefaultProperties
 
     AttachmentClass=class'ZMWeapAttach_DesertEagle_Pistol'
 
-    // WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_MAS49.Play_WEP_MAS49_Single_3P', FirstPersonCue=AkEvent'WW_WEP_MAS49.Play_WEP_MAS49_Fire_Single')
-    WeaponFireSndCustom(DEFAULT_FIREMODE)=SoundCue'ZM_AUD_DesertEagle.SoundCue.DesertEagle_Fire_1P_Cue'
-    WeaponFireSndFirstPersonCustom(DEFAULT_FIREMODE)=SoundCue'ZM_AUD_DesertEagle.SoundCue.DesertEagle_Fire_3P_Cue'
+    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_MAS49.Play_WEP_MAS49_Single_3P', FirstPersonCue=AkEvent'WW_WEP_MAS49.Play_WEP_MAS49_Fire_Single')
+    // WeaponFireSndCustom(DEFAULT_FIREMODE)=SoundCue'ZM_AUD_DesertEagle.SoundCue.DesertEagle_Fire_1P_Cue'
+    // WeaponFireSndFirstPersonCustom(DEFAULT_FIREMODE)=SoundCue'ZM_AUD_DesertEagle.SoundCue.DesertEagle_Fire_3P_Cue'
 }

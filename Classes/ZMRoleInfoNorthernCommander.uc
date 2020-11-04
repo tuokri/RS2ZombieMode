@@ -2,11 +2,11 @@ class ZMRoleInfoNorthernCommander extends RORoleInfoNorthernCommander;
 
 simulated function ExtraPawnModifiers(ZMNorthPawn NP)
 {
-    NP.HealthMax *= 1.5;
-    NP.Health *= 1.5;
-
-    // NP.HealthMax *= 1.105;
-    // NP.Health *= 1.105;
+    if (NP.HealthMax == 100 && NP.Health == 100)
+    {
+        NP.HealthMax *= 1.45;
+        NP.Health *= 1.45;
+    }
 }
 
 DefaultProperties

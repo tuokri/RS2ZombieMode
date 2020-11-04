@@ -17,6 +17,7 @@ simulated function float GetSpreadMod()
 }
 */
 
+/* ___________________SOUNDCUE MOD___________________
 // TODO: clean up last shot ping code.
 simulated function PlayFiringSound(byte FireModeNum)
 {
@@ -61,21 +62,8 @@ simulated function PlayFiringSound(byte FireModeNum)
     }
 }
 
-/**
- * This function handles playing sounds for weapons.  How it plays the sound depends on the following:
- *
- * If we are a listen server, then this sound is played and replicated as normal
- * If we are a remote client, but locally controlled (ie: we are on the client) we play the sound and don't replicate it
- * If we are a dedicated server, play the sound and replicate it to everyone BUT the owner (he will play it locally).
- *
- *
- * @param   SoundCue    - The Source Cue to play
- */
 simulated function WeaponPlayCustomSound(SoundCue Sound, optional float NoiseLoudness)
 {
-    Sound.VolumeMultiplier = ZMPlayerController(Instigator.Controller).GetSFXVolumeSetting();
-    Sound.VolumeMultiplier *= 5; // TODO: temporary. Find a way to tune the volume correctly.
-
     // if we are a listen server, just play the sound.  It will play locally
     // and be replicated to all other clients.
     if(Sound == None || Instigator == None)
@@ -83,19 +71,27 @@ simulated function WeaponPlayCustomSound(SoundCue Sound, optional float NoiseLou
         return;
     }
 
+    if(ZMPlayerController(Instigator.Controller) != None)
+    {
+        Sound.VolumeMultiplier = ZMPlayerController(Instigator.Controller).GetSFXVolumeSetting();
+        Sound.VolumeMultiplier *= 5; // TODO: temporary. Find a way to tune the volume correctly.
+    }
+
     Instigator.PlaySound(Sound, false, true);
 }
+___________________SOUNDCUE MOD___________________
+*/
 
 DefaultProperties
 {
     // TODO: clean up last shot ping code.
     bLastShot=False
-    WeaponFirePingSnd.Empty
-    WeaponFirePingSndFirstPerson.Empty
+    // WeaponFirePingSnd.Empty
+    // WeaponFirePingSndFirstPerson.Empty
 
     WeaponContentClass(0)="ZombieMode.ZMWeap_DesertEagle_Pistol_Content"
 
-    RoleSelectionImage(0)=Texture2D'VN_UI_Textures.WeaponTex.US_Weap_M1911_Pistol'
+    RoleSelectionImage(0)=Texture2D'ZM_WP_DesertEagle.HUD.deagle_select'
 
     WeaponClassType=ROWCT_HandGun
     TeamIndex=`ALLIES_TEAM_INDEX
@@ -103,7 +99,7 @@ DefaultProperties
     Category=ROIC_Secondary //ROIC_Primary
     Weight=1.99             //KG
     //RoleEncumbranceModifier=0.0
-    InvIndex=`ROII_M1911_Pistol
+    InvIndex=`ZMII_DesertEagle
     InventoryWeight=0
 
     PlayerIronSightFOV=65.0

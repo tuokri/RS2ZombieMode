@@ -9,6 +9,9 @@ var float NorthMaxFallSpeedModifier;
 var RORoleInfoClasses RORICSouth;
 var RORoleInfoClasses RORICNorth;
 
+var class<HUD> ZMHUDType;
+
+
 function PreBeginPlay()
 {
     `zmlog("PreBeginPlay()", 'Init');
@@ -16,6 +19,7 @@ function PreBeginPlay()
     ROGameInfo(WorldInfo.Game).PlayerControllerClass = class'ZMPlayerController';
     ROGameInfo(WorldInfo.Game).PlayerReplicationInfoClass = class'ZMPlayerReplicationInfo';
     ROGameInfo(WorldInfo.Game).PawnHandlerClass = class'ZMPawnHandler';
+    OverrideGameInfo();
 
     // VerifyConfig();
 }
@@ -29,11 +33,50 @@ function PostBeginPlay()
 
 simulated function Fuck()
 {
+    // OverrideGameInfo();
     OverrideMapInfo();
     DestroyPickupFactories();
 }
 
-// TODO: Doesn't work.
+simulated function OverrideGameInfo()
+{
+    local ROGameInfo ROGI;
+    local ROMapInfo ROMI;
+
+    `zmlog("ZombieModeMutator.OverrideGameInfo()", 'Debug');
+
+    ROGI = ROGameInfo(WorldInfo.Game);
+    if (ROGI.HUDType != ZMHUDType)
+    {
+        ROGI.HUDType = ZMHUDType;
+        ROGameInfoTerritories(ROGI).HUDType = ZMHUDType;
+    }
+
+    ROMI = ROMapInfo(WorldInfo.GetMapInfo());
+
+    `zmlog("ZombieModeMutator.OverrideGameInfo(): ROGI.DefendingTeam= " $ ROGI.DefendingTeam);
+    `zmlog("ZombieModeMutator.OverrideGameInfo(): ROMI.DefendingTeam= " $ ROMI.DefendingTeam);
+
+    if (ROMI.DefendingTeam == DT_North)
+    {
+        `zmlog("ZombieModeMutator.OverrideGameInfo(): Reversing teams and roles", 'Debug');
+        ROMI.DefendingTeam = DT_South;
+        ROMI.DefendingTeam16 = DT_South;
+        ROMI.DefendingTeam32 = DT_South;
+        ROMI.DefendingTeam64 = DT_South;
+        ROGI.bReverseRolesAndSpawns = True;
+        ROMI.InitRolesForGametype(WorldInfo.Game.Class, ROGI.MaxPlayers, True);
+        ROGameReplicationInfo(WorldInfo.Game.GameReplicationInfo).bReverseRolesAndSpawns = True;
+        ROGI.DefendingTeam = DT_South;
+    }
+    else
+    {
+        ROMI.InitRolesForGametype(WorldInfo.Game.Class, ROGI.MaxPlayers, False);
+    }
+
+    ROGI.Reset();
+}
+
 // foreach WorldInfo.AllPawns(class'ROVehicleHelicopter', ROVH)
 simulated function DestroyPickupFactories()
 {
@@ -42,7 +85,7 @@ simulated function DestroyPickupFactories()
 
     `zmlog("Destroying pickup factories", 'Pickups');
 
-    foreach WorldInfo.BasedActors(class'PickupFactory', PF)
+    foreach AllActors(class'PickupFactory', PF)
     {
         PF.bPickupHidden = True;
         PF.ShutDown();
@@ -77,12 +120,8 @@ simulated function OverrideMapInfo()
     `zmlog("AlliesReinforcementDelay64=" $ ROMI.AlliesReinforcementDelay64, 'Debug');
 
     ROMI.MinimumTimeDead = 0;
-    ROMI.ScoutReconInterval = 0;
-    ROMI.AerialReconInterval = 0;
-    ROMI.DefendingTeam = DT_South;
-    ROMI.DefendingTeam16 = DT_South;
-    ROMI.DefendingTeam32 = DT_South;
-    ROMI.DefendingTeam64 = DT_South;
+    ROMI.ScoutReconInterval = 300;
+    ROMI.AerialReconInterval = 300;
     ROMI.AxisReinforcementCount16 *= 1.5;
     ROMI.AxisReinforcementCount32 *= 1.5;
     ROMI.AxisReinforcementCount64 *= 1.5;
@@ -108,6 +147,7 @@ simulated function OverrideMapInfo()
     ROMI.InstantRespawnInterval = 60;
 }
 
+/*
 function VerifyConfig()
 {
     NorthJumpZModifier = VerifyFloatModifierMin(
@@ -126,7 +166,9 @@ function VerifyConfig()
         Nameof(NorthMaxFallSpeedModifier), NorthMaxFallSpeedModifier,
         `NORTH_PAWN_MODIFIER_MIN, `NORTH_PAWN_MODIFIER_DEFAULT);
 }
+*/
 
+/*
 function float VerifyFloatModifierMin(Name ModifierName, float Modifier,
     float MinValue, float DefaultValue)
 {
@@ -138,6 +180,7 @@ function float VerifyFloatModifierMin(Name ModifierName, float Modifier,
     }
     return Modifier;
 }
+*/
 
 simulated function ReplacePawns()
 {
@@ -159,9 +202,9 @@ simulated function ModifyNorthPlayer(out Pawn Other)
     NP.MaxFallSpeed *= NorthMaxFallSpeedModifier;
 
     RORI = ZMPlayerController(NP.Controller).GetRoleInfo();
-    `zmlog("RoleInfo = " $ RORI, 'Debug');
+    // `zmlog("RoleInfo = " $ RORI, 'Debug');
     RONI = ZMRoleInfoNorthernInfantry(RORI);
-    `zmlog("RONI = " $ RONI, 'Debug');
+    // `zmlog("RONI = " $ RONI, 'Debug');
     RONI.ExtraPawnModifiers(NP);
 }
 
@@ -182,6 +225,9 @@ simulated function ModifyPlayer(Pawn Other)
 
     // `zmlog("Modifying Pawn: " $ Other, 'Debug');
 
+    // `zmlog("Telling client to set HUD to " $ ZMHUDType, 'HUD');
+    // ZMPlayerController(Other.Controller).ClientSetHUD(ZMHUDType);
+
     if (Other.GetTeamNum() == `ALLIES_TEAM_INDEX)
     {
         ModifySouthPlayer(Other);
@@ -201,6 +247,8 @@ simulated function ModifyPreLogin(string Options, string Address, out string Err
 
 DefaultProperties
 {
+    ZMHUDType=class'ZombieMode.ZMHUD'
+
     NorthJumpZModifier=`NORTH_PAWN_MODIFIER_DEFAULT
     NorthGroundSpeedModifier=`NORTH_PAWN_MODIFIER_DEFAULT
     NorthAccelRateModifier=`NORTH_PAWN_MODIFIER_DEFAULT

@@ -1,4 +1,5 @@
-class ZMWeap_Katana extends ROMeleeWeapon;
+class ZMWeap_Katana_Secondary_Level2 extends ROMeleeWeapon;
+
 
 simulated state WeaponEquipping
 {
@@ -12,25 +13,20 @@ simulated state WeaponEquipping
 
 defaultproperties
 {
-	WeaponContentClass(0)="ZombieMode.ZMWeap_Katana_Content"
-	// WeaponContentClass(1)="ZombieMode.ZMWeap_Katana_Level2"
-	// WeaponContentClass(2)="ZombieMode.ZMWeap_Katana_Level3"
-	RoleSelectionImage(0)=Texture2D'ZM_RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD1'
-	// RoleSelectionImage(1)=Texture2D'ZM_RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD2'
-	// RoleSelectionImage(2)=Texture2D'ZM_RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD3'
+	WeaponContentClass(0)="ZombieMode.ZMWeap_Katana_Content_Secondary_Level2"
+	RoleSelectionImage(0)=Texture2D'ZM_RS_UI_Textures_Three.WeaponRenders.JP_Katana_UPGD2'
 
-	// RO Classic Mode
-	// ClassicWeaponLevelIndex=1
-	// ClassicWeaponContentClass="ZombieMode.ZMWeap_Katana_Level2"
+	// bDebugWeapon=True
 
-	WeaponClassType=ROWCT_Melee
 	TeamIndex=`AXIS_TEAM_INDEX
 
-	Category=ROIC_Primary
-	Weight=1 // kg
+	WeaponClassType=ROWCT_Melee
+
+	Category=ROIC_Secondary
+	Weight=0.05 // kg
 	RoleEncumbranceModifier=0.0
-	InvIndex=`ZMII_Katana
-	InventoryWeight=1
+	InvIndex=`ZMII_Katana_Secondary
+	InventoryWeight=9
 
 	PlayerViewOffset=(X=-1.557,Y=2.077,Z=-1.914)
 

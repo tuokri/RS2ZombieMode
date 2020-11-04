@@ -2,7 +2,7 @@ class ZMWeapAttach_Katana_Level2 extends ZMWeapAttach_Katana;
 
 defaultproperties
 {
-	WeaponClass=class'ZMWeap_Katana'
+	WeaponClass=class'ZMWeap_Katana_Level2'
 
 	// Weapon SkeletalMesh
 	Begin Object Name=SkeletalMeshComponent0

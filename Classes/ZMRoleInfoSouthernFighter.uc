@@ -13,28 +13,36 @@ DefaultProperties
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'ROGame.ROWeap_IZH43_Shotgun'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_DesertEagle_Pistol'),
+        SecondaryWeapons=(
+            class'ZombieMode.ZMWeap_BHP_Pistol',
+            class'ZMWeap_DesertEagle_Pistol'),
         OtherItems=(),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Early]={(
         PrimaryWeapons=(class'ROGame.ROWeap_IZH43_Shotgun'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_DesertEagle_Pistol'),
+        SecondaryWeapons=(
+            class'ZombieMode.ZMWeap_BHP_Pistol',
+            class'ZMWeap_DesertEagle_Pistol'),
         OtherItems=(),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Mid]={(
         PrimaryWeapons=(class'ROGame.ROWeap_IZH43_Shotgun'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_DesertEagle_Pistol'),
+        SecondaryWeapons=(
+            class'ZombieMode.ZMWeap_BHP_Pistol',
+            class'ZMWeap_DesertEagle_Pistol'),
         OtherItems=(),
         SquadLeaderItems=()
     )}
 
     Items[RORIGM_Campaign_Late]={(
         PrimaryWeapons=(class'ROGame.ROWeap_IZH43_Shotgun'),
-        SecondaryWeapons=(class'ZombieMode.ZMWeap_DesertEagle_Pistol'),
+        SecondaryWeapons=(
+            class'ZombieMode.ZMWeap_BHP_Pistol',
+            class'ZMWeap_DesertEagle_Pistol'),
         OtherItems=(),
         SquadLeaderItems=()
     )}
