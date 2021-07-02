@@ -10,21 +10,10 @@ var int     CachedSFXVolumeMaxAge;
 
 var class<HUD> ZMHUDType;
 
-var int OverheadMapDelayedInitDone;
+var bool bSwappedTeams;
+var bool bOverheadMapInitDone;
 
-/*
-// Bomber bomb charges.
-var array<ZMBomberBomb> BBCharges;
-var int iPlantedBBChargeCount;
-*/
-
-/*
-replication
-{
-    if (bNetOwner && Role == ROLE_Authority && bNetDirty)
-        iPlantedBBChargeCount;
-}
-*/
+var ZMAudioManager AudioManager;
 
 simulated function PreBeginPlay()
 {
@@ -37,27 +26,50 @@ simulated function PreBeginPlay()
 
     if (Role < ROLE_Authority)
     {
-        SetTimer(1.5, True, 'UpdateSFXVolume');
+        SetTimer(2, True, 'UpdateSFXVolume');
+        SetTimer(1.0, True, 'CheckRoundStart');
+    }
+
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
+    {
+        AudioManager = new(self) class'ZMAudioManager';
+        if (AudioManager != None)
+        {
+            AudioManager.InitSoundClassVolumes();
+        }
+        else
+        {
+            `warn("ERROR! Unable to create AudioManager!");
+        }
     }
 }
 
-/*
-simulated function PostBeginPlay()
+simulated function CheckRoundStart()
+{
+    if (ROGameInfo(WorldInfo.Game).bRoundHasBegun)
+    {
+        bOverheadMapInitDone = False;
+        ClearTimer('CheckRoundStart');
+    }
+}
+
+simulated event PostBeginPlay()
 {
     super.PostBeginPlay();
-    SetTimer(10.0, False, 'DelayedOverheadWidgetInit');
+
+    // bOverheadMapInitDone = False;
+
+    myROHUD.KillMessageWidget.Initialize(Self);
+    myROHUD.MessagesChatWidget.Initialize(Self);
 }
-*/
 
 exec function ShowOverheadMap()
 {
-    //if (OverheadMapDelayedInitDone < 15)
-    //{
-        if (Role != ROLE_Authority)
-        {
-            DelayedOverheadWidgetInit();
-        }
-    //}
+    if (Role != ROLE_Authority && !bOverheadMapInitDone)
+    {
+        DelayedOverheadWidgetInit();
+        bOverheadMapInitDone = True;
+    }
 
     super.ShowOverheadMap();
 }
@@ -69,17 +81,35 @@ simulated function DelayedOverheadWidgetInit()
     myROHUD.OverheadMapWidget.InitializeObjectives();
     myROHUD.OverheadMapWidget.UpdateSpawnProtections(ROGameReplicationInfo(WorldInfo.GRI));
     myROHUD.OverheadMapWidget.UpdateMapBoundaries(ROGameReplicationInfo(WorldInfo.GRI));
-    OverheadMapDelayedInitDone++;
+    // OverheadMapDelayedInitDone++;
 }
 
-function UpdateSFXVolume()
+reliable client function ClientRegisterAudioComponents(Actor A)
 {
-    local AudioComponent AC;
-    local float NewSFXVolume;
-    local ZMNorthPawn NP;
-    local ZMSouthPawn SP;
+    local ZMAudioComponent DRAC;
 
-    NewSFXVolume = GetSFXVolumeSetting();
+    `log("ClientRegisterAudioComponents() Actor=" $ A,, 'ZombieModeAudio');
+
+    if (AudioManager != None)
+    {
+        ForEach A.ComponentList(class'ZMAudioComponent', DRAC)
+        {
+            AudioManager.RegisterAudioComponent(DRAC);
+            `log("ClientRegisterAudioComponents(): AC=" $ DRAC,, 'ZombieModeAudio');
+        }
+    }
+}
+
+simulated function UpdateSFXVolume()
+{
+    // local float NewSFXVolume;
+    // local AudioComponent AC;
+    // local ZMNorthPawn NP;
+    // local ZMSouthPawn SP;
+
+    GetSFXVolumeSetting();
+
+    /*
 
     // `zmlog("CachedSFXVolume = " $ CachedSFXVolume);
     // `zmlog("NewSFXVolume    = " $ NewSFXVolume);
@@ -110,9 +140,11 @@ function UpdateSFXVolume()
             }
         }
     }
+
+    */
 }
 
-function float GetSFXVolumeSetting()
+simulated function GetSFXVolumeSetting()
 {
     local AudioDevice Audio;
     local float TimeSeconds;
@@ -123,8 +155,10 @@ function float GetSFXVolumeSetting()
         Audio = class'Engine'.static.GetAudioDevice();
         if (Audio != None)
         {
-            CachedSFXVolume = Audio.AKSFXVolume * Audio.AKMasterVolume;
+            CachedSFXVolume = Audio.AKSFXVolume * Audio.AKMasterVolume * 2.0;
             CachedSFXVolumeAge = TimeSeconds;
+
+            AudioManager.UpdateVolume(CachedSFXVolume, EAC_SFX);
 
             /*
             `zmlog("Audio.AKSFXVolume=    " $ Audio.AKSFXVolume);
@@ -139,7 +173,7 @@ function float GetSFXVolumeSetting()
         }
     }
 
-    return CachedSFXVolume;
+    // return CachedSFXVolume;
 }
 
 simulated function ReceivedGameClass(class<GameInfo> GameClass)
@@ -154,36 +188,6 @@ simulated function ReceivedGameClass(class<GameInfo> GameClass)
     }
 }
 
-/*
-function float VerifyFloatModifierMin(Name ModifierName, float Modifier,
-    float MinValue, float DefaultValue)
-{
-    if (Modifier < `NORTH_PAWN_MODIFIER_MIN)
-    {
-        `zmlog("WARNING: " $ ModifierName $ "(" $ Modifier $ ") is less than " $
-            MinValue $ " using default value: " $ DefaultValue, 'Config');
-        Modifier = DefaultValue;
-    }
-    return Modifier;
-}
-*/
-
-/*
-function VerifyConfig()
-{
-    NorthReinforcementDelayModifier = VerifyFloatModifierMin(
-        Nameof(NorthReinforcementDelayModifier), NorthReinforcementDelayModifier,
-        `REINFORCEMENT_DELAY_MODIFIER_MIN, `NORTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT);
-
-    SouthReinforcementDelayModifier = VerifyFloatModifierMin(
-        Nameof(SouthReinforcementDelayModifier), SouthReinforcementDelayModifier,
-        `REINFORCEMENT_DELAY_MODIFIER_MIN, `SOUTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT);
-
-    SaveConfig();
-    `zmlog("Configuration verified", 'Config');
-}
-*/
-
 simulated function ReplicateModShit()
 {
     OverrideGameInfo();
@@ -196,7 +200,7 @@ simulated function OverrideGameInfo()
 {
     local ROGameInfo ROGI;
     local ROMapInfo ROMI;
-    local ROPlayerReplicationInfo ROPRI;
+    // local ROPlayerReplicationInfo ROPRI;
 
     `zmlog("ZMPlayerController.OverrideGameInfo()", 'Debug');
 
@@ -225,15 +229,24 @@ simulated function OverrideGameInfo()
         ROMI.InitRolesForGametype(WorldInfo.Game.Class, ROGI.MaxPlayers, True);
         ROGameReplicationInfo(WorldInfo.Game.GameReplicationInfo).bReverseRolesAndSpawns = True;
         ROGI.DefendingTeam = DT_South;
+
+        bSwappedTeams = True;
+
+        ROGI.Reset();
+        ClientReset();
+        myROHUD.SetUpGameTypeHUD();
+
     }
     else
     {
         ROMI.InitRolesForGametype(WorldInfo.Game.Class, ROGI.MaxPlayers, False);
     }
 
-    ClientSetHUD(ZMHUDType);
-    `zmlog("ZMPlayerController.ClientSetHUD() to " $ ZMHUDType, 'Debug');
+    // ClientSetHUD(ZMHUDType);
+    // `zmlog("ZMPlayerController.ClientSetHUD() to " $ ZMHUDType, 'Debug');
 
+    /*
+    MyROHUD.bInitialized = False;
     ROPRI = ROPlayerReplicationInfo(PlayerReplicationInfo);
     myROHUD.SetUpGameTypeHUD();
     myROHUD.SetupCommsWidgets(ROPRI.RoleInfo, True);
@@ -241,8 +254,17 @@ simulated function OverrideGameInfo()
     // myROHUD.OverheadMapWidget.Initialize(Self);
     // myROHUD.OverheadMapWidget.UpdateWidget();
     myROHUD.ShowAllTemporarilyHiddenHUDWidgets();
+    */
 
-    ROGI.Reset();
+    /*
+    SpawnDefaultHUD();
+    myROHUD.bInitialized = False;
+    myROHUD.PostBeginPlay();
+    myROHUD.SetUpGameTypeHUD();
+    myROHUD.SetupCommsWidgets(ROPRI.RoleInfo, True);
+    myROHUD.ShowAllTemporarilyHiddenHUDWidgets();
+    myROHUD.bShowHud = True;
+    */
 }
 
 simulated function DestroyPickupFactories()
@@ -289,9 +311,20 @@ simulated function OverrideMapInfo()
     ROMI.MinimumTimeDead = 0;
     ROMI.ScoutReconInterval = 300;
     ROMI.AerialReconInterval = 300;
-    ROMI.AxisReinforcementCount16 *= 1.5;
-    ROMI.AxisReinforcementCount32 *= 1.5;
-    ROMI.AxisReinforcementCount64 *= 1.5;
+
+    if (bSwappedTeams)
+    {
+        ROMI.AlliesReinforcementCount16 *= 1.5;
+        ROMI.AlliesReinforcementCount32 *= 1.5;
+        ROMI.AlliesReinforcementCount64 *= 1.5;
+    }
+    else
+    {
+        ROMI.AxisReinforcementCount16 *= 1.5;
+        ROMI.AxisReinforcementCount32 *= 1.5;
+        ROMI.AxisReinforcementCount64 *= 1.5;
+    }
+
     ROMI.EnhancedLogisticsLimit16 = 0;
     ROMI.EnhancedLogisticsLimit32 = 0;
     ROMI.EnhancedLogisticsLimit64 = 0;
@@ -577,8 +610,7 @@ simulated function ClearCharges()
 }
 */
 
-/*
-function SpawnDefaultHUD()
+simulated function SpawnDefaultHUD()
 {
     local ZMPlayerReplicationInfo ZMPRI;
 
@@ -593,6 +625,11 @@ function SpawnDefaultHUD()
 
     if (myHUD != None)
     {
+        if (myROHUD != None)
+        {
+            myROHUD.Destroy();
+        }
+
         myROHUD = ZMHUD(myHUD);
 
         // Give the player the proper orders widget (or remove it if they shouldn't have it)
@@ -602,12 +639,23 @@ function SpawnDefaultHUD()
         }
     }
 }
-*/
 
 reliable client function ClientSetHUD(class<HUD> newHUDType)
 {
+    // local ROPlayerReplicationInfo ROPRI;
+
     `zmlog("ZMPlayerController.ClientSetHUD() with newHUDType = " $ newHUDType);
     super.ClientSetHUD(newHUDType);
+    /*
+    SpawnDefaultHUD();
+    myROHUD.bInitialized = False;
+    myROHUD.PostBeginPlay();
+    myROHUD.SetUpGameTypeHUD();
+    ROPRI = ROPlayerReplicationInfo(PlayerReplicationInfo);
+    myROHUD.SetupCommsWidgets(ROPRI.RoleInfo, True);
+    myROHUD.ShowAllTemporarilyHiddenHUDWidgets();
+    myROHUD.bShowHud = True;
+    */
 }
 
 //////////////////////////////////////////////////
@@ -616,7 +664,7 @@ reliable client function ClientSetHUD(class<HUD> newHUDType)
 
 
 `ifdef(DEBUG)
-
+/*
 simulated exec function SpawnZMM113()
 {
     local vector                    CamLoc, StartShot, EndShot, X, Y, Z;
@@ -639,27 +687,155 @@ simulated exec function SpawnZMM113()
         ROTank.Mesh.AddImpulse(vect(0,0,1), ROTank.Location);
     }
 }
+*/
 
-exec function Camera( name NewMode )
+function vector MakeVector(float X, float Y, float Z)
+{
+    local vector V;
+
+    V.X = X;
+    V.Y = Y;
+    V.Z = Z;
+
+    return V;
+}
+
+simulated exec function SetScopePosition(float X, float Y, float Z)
+{
+    ROSniperWeapon(Pawn.Weapon).ScopePosition = MakeVector(X, Y, Z);
+}
+
+exec function SetScopeZ(float NewScopeZ)
+{
+    ROSniperWeapon(Pawn.Weapon).ScopeLenseMIC.SetScalarParameterValue('v_position', NewScopeZ);
+}
+
+simulated exec function SetShoulderedPosition(float X, float Y, float Z)
+{
+    ROWeapon(Pawn.Weapon).ShoulderedPosition = MakeVector(X, Y, Z);
+}
+
+simulated exec function SetZoomInRotation(int Pitch, int Yaw, int Roll)
+{
+    ROWeapon(Pawn.Weapon).ZoomInRotation.Pitch = Pitch;
+    ROWeapon(Pawn.Weapon).ZoomInRotation.Yaw = Yaw;
+    ROWeapon(Pawn.Weapon).ZoomInRotation.Roll = Roll;
+}
+
+simulated exec function SetShoulderedRotation(int Pitch, int Yaw, int Roll)
+{
+    ROWeapon(Pawn.Weapon).ShoulderRotation.Pitch = Pitch;
+    ROWeapon(Pawn.Weapon).ShoulderRotation.Yaw = Yaw;
+    ROWeapon(Pawn.Weapon).ShoulderRotation.Roll = Roll;
+}
+
+simulated exec function SetSightPitch(int RangeIndex, int NewSightPitch)
+{
+    ROWeapon(Pawn.Weapon).SightRanges[RangeIndex].SightPitch = NewSightPitch;
+    ROWeapon(Pawn.Weapon).SightIndexUpdated();
+}
+
+simulated exec function SetSightSlideOffset(int RangeIndex, float NewSightSlideOffset)
+{
+    ROWeapon(Pawn.Weapon).SightRanges[RangeIndex].SightSlideOffset = NewSightSlideOffset;
+    ROWeapon(Pawn.Weapon).SightIndexUpdated();
+}
+
+simulated exec function SetSightPositionOffset(int RangeIndex, float NewSightPositionOffset)
+{
+    ROWeapon(Pawn.Weapon).SightRanges[RangeIndex].SightPositionOffset = NewSightPositionOffset;
+    ROWeapon(Pawn.Weapon).SightIndexUpdated();
+}
+
+simulated exec function SetAddedPitch(int RangeIndex, int NewAddedPitch)
+{
+    ROWeapon(Pawn.Weapon).SightRanges[RangeIndex].AddedPitch = NewAddedPitch;
+    ROWeapon(Pawn.Weapon).SightIndexUpdated();
+}
+
+exec function SetPlayerViewOffset(float X, float Y, float Z)
+{
+    ROWeapon(Pawn.Weapon).PlayerViewOffset = MakeVector(X, Y, Z);
+}
+
+exec function SetIronsightPosX(float NewX)
+{
+    ROWeapon(Pawn.Weapon).IronSightPosition.X = NewX;
+    ROWeapon(Pawn.Weapon).PlayerViewOffset.X = NewX;
+}
+
+// Helper function for working out a nice ironsight position when changing the weapon zoom FoV
+exec function SetIronsightPosY(float NewY)
+{
+    ROWeapon(Pawn.Weapon).IronSightPosition.Y = NewY;
+    ROWeapon(Pawn.Weapon).PlayerViewOffset.Y = NewY;
+}
+
+// Helper function for working out a nice ironsight position when changing the weapon zoom FoV
+exec function SetIronsightPosZ(float NewZ)
+{
+    ROWeapon(Pawn.Weapon).IronSightPosition.Z = NewZ;
+    ROWeapon(Pawn.Weapon).PlayerViewOffset.Z = NewZ;
+}
+
+exec function SetISFocusDepth(float NewDepth)
+{
+    ROWeapon(Pawn.Weapon).ISFocusDepth = NewDepth;
+}
+
+exec function SetISFocusBlendRadius(float NewRadius)
+{
+    ROWeapon(Pawn.Weapon).ISFocusBlendRadius = NewRadius;
+}
+
+exec function SetSightRot(int SightRot)
+{
+    ROWeapon(Pawn.Weapon).SightRotController.SetSkelControlStrength( 1.0f , 0.0f );
+    ROWeapon(Pawn.Weapon).SightRotController.BoneRotation.Pitch = SightRot * -1;
+}
+
+exec function SetSightSlide(float SlideLoc)
+{
+    ROWeapon(Pawn.Weapon).SightSlideController.SetSkelControlStrength( 1.0f , 0.0f );
+    ROWeapon(Pawn.Weapon).SightSlideController.BoneTranslation.X = SlideLoc;
+}
+
+exec function SetSightZ(float NewZ)
+{
+    ROWeapon(Pawn.Weapon).IronSightPosition.Z = NewZ;
+    ROWeapon(Pawn.Weapon).PlayerViewOffset.Z = NewZ;
+}
+
+exec function Camera(name NewMode)
 {
     ServerCamera(NewMode);
 }
 
-reliable server function ServerCamera( name NewMode )
+reliable server function ServerCamera(name NewMode)
 {
-    if ( NewMode == '1st' )
+    if (NewMode == '1st')
     {
         NewMode = 'FirstPerson';
     }
-    else if ( NewMode == '3rd' )
+    else if (NewMode == '3rd')
     {
         NewMode = 'ThirdPerson';
     }
+    else if (NewMode == 'free')
+    {
+        NewMode = 'FreeCam';
+    }
+    else if (NewMode == 'fixed')
+    {
+        NewMode = 'Fixed';
+    }
 
-    SetCameraMode( NewMode );
+    SetCameraMode(NewMode);
 
-    if ( PlayerCamera != None )
-        `log("#### " $ PlayerCamera.CameraStyle);
+    if (PlayerCamera != None)
+    {
+        `dr("CameraStyle=" $ PlayerCamera.CameraStyle);
+    }
 }
 
 `endif
@@ -679,5 +855,7 @@ DefaultProperties
     NorthReinforcementDelayModifier=`NORTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT
     SouthReinforcementDelayModifier=`SOUTH_REINFORCEMENT_DELAY_MODIFIER_DEFAULT
 
-    OverheadMapDelayedInitDone=0
+    // OverheadMapDelayedInitDone=0
+
+    bOverheadMapInitDone=True
 }

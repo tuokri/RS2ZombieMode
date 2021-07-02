@@ -93,3 +93,9 @@ DisplayName="Katana"
 ShortDisplayName="Katana"
 CapitalizedDisplayName="KATANA"
 Description="Japanese Officers and NCOs were equipped with the 'shin gunto'."
+
+[ZMWeap_ZombieClaws]
+DisplayName="Claws"
+ShortDisplayName="Claws"
+CapitalizedDisplayName="CLAWS"
+Description="Brains..."

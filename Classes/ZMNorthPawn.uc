@@ -97,11 +97,12 @@ simulated event PreBeginPlay()
     // ZMPlayerController(Controller).GetSFXVolumeSetting();
 }
 
-/*
+
 simulated event PostBeginPlay()
 {
     super.PostBeginPlay();
 
+    /*
     local vector EyeLoc;
     local rotator EyeRot;
     local ParticleSystemComponent Emitter;
@@ -115,8 +116,31 @@ simulated event PostBeginPlay()
     Emitter.bAutoActivate = True;
     Emitter.SetTemplate(EyeFlareTemplate);
     `zmlog("Emitter=" $ Emitter, 'Debug');
+    */
+
+    // AudioInit2();
+    AudioInit();
 }
-*/
+
+simulated function AudioInit()
+{
+    local ZMAudioComponent ZMAC;
+    local ZMPlayerController ZMPC;
+
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
+    {
+        ForEach LocalPlayerControllers(class'ZMPlayerController', ZMPC)
+        {
+            if (ZMPC.AudioManager != None)
+            {
+                ForEach ComponentList(class'ZMAudioComponent', ZMAC)
+                {
+                    ZMPC.AudioManager.RegisterAudioComponent(ZMAC);
+                }
+            }
+        }
+    }
+}
 
 /*
 simulated event PostBeginPlay()
@@ -338,7 +362,7 @@ simulated function BurnGlowLoop()
 ////////////////////////////////////////////////////////////////////////////////
 
 /** Check if we can enter Banzai. */
-function UpdateBanzaiStatus()
+simulated function UpdateBanzaiStatus()
 {
     local ROWeapon ROW;
     local ZMPlayerController ZMPC;
@@ -358,7 +382,8 @@ function UpdateBanzaiStatus()
                 // ZMPC.DisableHint(ROHTimed_Banzai, False);
                 // ZMPC.TriggerHint(ROHTrig_BanzaiEffects);
 
-                if (ZMWeap_Katana(Weapon) != None)
+                if (ZMWeap_Katana(Weapon) != None || ZMWeap_Katana_Level2(Weapon) != None
+                    || ZMWeap_Katana_Level3(Weapon) != None || ZMWeap_ZombieClaws(Weapon) != None)
                 {
                     ZMPC.DisableHint(ZMHTrig_Katana, True);
                 }
@@ -368,8 +393,8 @@ function UpdateBanzaiStatus()
         bOldBanzai = bInBanzai;
     }
 
-    // Only do banzai calcs on the server.
-    if( Role < ROLE_Authority )
+    // Only do banzai calcs on the server (and when standalone).
+    if(Role < ROLE_Authority && (WorldInfo.NetMode != NM_Standalone))
     {
         return;
     }
@@ -378,8 +403,8 @@ function UpdateBanzaiStatus()
     {
         ROW = ROWeapon(Weapon);
 
-        // Banzai is katana only for now.
-        if (ROW != None && ROW.bMeleeAttackReady && ZMWeap_Katana(ROW) != None)
+        if (ROW != None && ROW.bMeleeAttackReady && (ZMWeap_Katana(ROW) != None
+            || ZMWeap_Katana_Level2(ROW) != None || ZMWeap_Katana_Level3(ROW) != None || ZMWeap_ZombieClaws(ROW) != None))
         {
             // `zmlog("bBanzaiReady = True", 'Debug');
             bBanzaiReady = True;
@@ -413,7 +438,7 @@ function UpdateBanzaiStatus()
 }
 
 /** Called on a looping timer. */
-function PerformBanzai()
+simulated function PerformBanzai()
 {
     // `zmlog("PerformBanzai(): Pawn=" $ self, 'Debug');
 
@@ -422,7 +447,7 @@ function PerformBanzai()
 }
 
 /** Makes a banzai charger yell "BAAANZAIIIIII" */
-function HandleBanzaiYelling()
+simulated function HandleBanzaiYelling()
 {
     local float EventTime;
 
@@ -433,6 +458,11 @@ function HandleBanzaiYelling()
 
         bBanzaiFlag = True;
         SetTimer(3.0, False, 'BanzaiFlagOff'); // Allows banzai sound effects to trigger again.
+
+        if (WorldInfo.NetMode == NM_Standalone)
+        {
+            CustomPlaySound(bBanzaiFlag);
+        }
 
         /*
         if (ROGameInfo(WorldInfo.Game) != None)
@@ -445,13 +475,13 @@ function HandleBanzaiYelling()
     }
 }
 
-function BanzaiFlagOff()
+simulated function BanzaiFlagOff()
 {
     bBanzaiFlag = False;
 }
 
 // Checks for any other Japanese (zombie) players who are charging and suppresses nearby Americans.
-function CheckBanzaiRadius()
+simulated function CheckBanzaiRadius()
 {
     local bool bKatanaInGroup;
     local int TeamNum;
@@ -529,6 +559,21 @@ function CheckBanzaiRadius()
 
 // spawnbomberbomb
 
+/*
+function AudioInit2()
+{
+    local ZMPlayerController ZMPC;
+
+    if (Role == ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
+    {
+        ForEach AllActors(class'ZMPlayerController', ZMPC)
+        {
+            ZMPC.ClientRegisterAudioComponents(Self);
+        }
+    }
+}
+*/
+
 DefaultProperties
 {
     // Initially False.
@@ -547,21 +592,22 @@ DefaultProperties
 
     // EyeFlareTemplate=ParticleSystem'eyeflaretest.FX_VN_Flare_2'
 
-    Begin Object Class=AudioComponent Name=BanzaiAudioComponent
+    Begin Object Class=ZMAudioComponent Name=BanzaiAudioComponent
         SoundCue=SoundCue'ZM_AUD_RS_VOX_Chatter_JapNat.Infantry.ACT_INF_Charging_NOR_Cue_01'
-        VolumeMultiplier=0.3
+        VolumeMultiplier=1.0
+        AudioClass=EAC_SFX
     End Object
     BanzaiAudio=BanzaiAudioComponent
     Components.Add(BanzaiAudioComponent)
 
-    BreathStaminaExhaustedLimit = 0.2;
-    BreathStaminaStandardLimit = 0.5;
-    STAMINA_STD_REGEN_RATE = 5.0;
-    STAMINA_FRESH_REGEN_RATE = 6.0;
-    STAMINA_EXHAUSTED_REGEN_RATE = 3.0;
-    STAMINA_DRAIN_JUMP = 8.0;
-    STAMINA_JUMP_SPEED_PENALTY = 0.2;
-    STAMINA_STANDSTILL_REGEN_MOD = 3.0;
+    BreathStaminaExhaustedLimit=0.2
+    BreathStaminaStandardLimit=0.5
+    STAMINA_STD_REGEN_RATE=5.0
+    STAMINA_FRESH_REGEN_RATE=6.0
+    STAMINA_EXHAUSTED_REGEN_RATE=3.0
+    STAMINA_DRAIN_JUMP=8.0
+    STAMINA_JUMP_SPEED_PENALTY=0.2
+    STAMINA_STANDSTILL_REGEN_MOD=3.0
 
     BurnGlowStep=0.05
 

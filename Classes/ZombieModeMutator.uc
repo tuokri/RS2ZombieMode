@@ -11,6 +11,8 @@ var RORoleInfoClasses RORICNorth;
 
 var class<HUD> ZMHUDType;
 
+var bool bSwappedTeams;
+
 
 function PreBeginPlay()
 {
@@ -20,20 +22,17 @@ function PreBeginPlay()
     ROGameInfo(WorldInfo.Game).PlayerReplicationInfoClass = class'ZMPlayerReplicationInfo';
     ROGameInfo(WorldInfo.Game).PawnHandlerClass = class'ZMPawnHandler';
     OverrideGameInfo();
-
-    // VerifyConfig();
 }
 
 function PostBeginPlay()
 {
     `zmlog("PostBeginPlay()", 'Init');
     ReplacePawns();
-    Fuck();
+    OverrideStuff();
 }
 
-simulated function Fuck()
+simulated function OverrideStuff()
 {
-    // OverrideGameInfo();
     OverrideMapInfo();
     DestroyPickupFactories();
 }
@@ -68,13 +67,13 @@ simulated function OverrideGameInfo()
         ROMI.InitRolesForGametype(WorldInfo.Game.Class, ROGI.MaxPlayers, True);
         ROGameReplicationInfo(WorldInfo.Game.GameReplicationInfo).bReverseRolesAndSpawns = True;
         ROGI.DefendingTeam = DT_South;
+        bSwappedTeams = True;
+        ROGI.Reset();
     }
     else
     {
         ROMI.InitRolesForGametype(WorldInfo.Game.Class, ROGI.MaxPlayers, False);
     }
-
-    ROGI.Reset();
 }
 
 // foreach WorldInfo.AllPawns(class'ROVehicleHelicopter', ROVH)
@@ -122,9 +121,20 @@ simulated function OverrideMapInfo()
     ROMI.MinimumTimeDead = 0;
     ROMI.ScoutReconInterval = 300;
     ROMI.AerialReconInterval = 300;
-    ROMI.AxisReinforcementCount16 *= 1.5;
-    ROMI.AxisReinforcementCount32 *= 1.5;
-    ROMI.AxisReinforcementCount64 *= 1.5;
+
+    if (bSwappedTeams)
+    {
+        ROMI.AlliesReinforcementCount16 *= 1.5;
+        ROMI.AlliesReinforcementCount32 *= 1.5;
+        ROMI.AlliesReinforcementCount64 *= 1.5;
+    }
+    else
+    {
+        ROMI.AxisReinforcementCount16 *= 1.5;
+        ROMI.AxisReinforcementCount32 *= 1.5;
+        ROMI.AxisReinforcementCount64 *= 1.5;
+    }
+
     ROMI.EnhancedLogisticsLimit16 = 0;
     ROMI.EnhancedLogisticsLimit32 = 0;
     ROMI.EnhancedLogisticsLimit64 = 0;
@@ -146,41 +156,6 @@ simulated function OverrideMapInfo()
     ROMI.AntiAirCooldown = 0;
     ROMI.InstantRespawnInterval = 60;
 }
-
-/*
-function VerifyConfig()
-{
-    NorthJumpZModifier = VerifyFloatModifierMin(
-        Nameof(NorthJumpZModifier), NorthJumpZModifier,
-        `NORTH_PAWN_MODIFIER_MIN, `NORTH_PAWN_MODIFIER_DEFAULT);
-
-    NorthGroundSpeedModifier = VerifyFloatModifierMin(
-        Nameof(NorthGroundSpeedModifier), NorthGroundSpeedModifier,
-        `NORTH_PAWN_MODIFIER_MIN, `NORTH_PAWN_MODIFIER_DEFAULT);
-
-    NorthAccelRateModifier = VerifyFloatModifierMin(
-        Nameof(NorthAccelRateModifier), NorthAccelRateModifier,
-        `NORTH_PAWN_MODIFIER_MIN, `NORTH_PAWN_MODIFIER_DEFAULT);
-
-    NorthMaxFallSpeedModifier = VerifyFloatModifierMin(
-        Nameof(NorthMaxFallSpeedModifier), NorthMaxFallSpeedModifier,
-        `NORTH_PAWN_MODIFIER_MIN, `NORTH_PAWN_MODIFIER_DEFAULT);
-}
-*/
-
-/*
-function float VerifyFloatModifierMin(Name ModifierName, float Modifier,
-    float MinValue, float DefaultValue)
-{
-    if (Modifier < `NORTH_PAWN_MODIFIER_MIN)
-    {
-        `zmlog("WARNING: " $ ModifierName $ "(" $ Modifier $ ") is less than " $
-            MinValue $ " using default value: " $ DefaultValue, 'Config');
-        Modifier = DefaultValue;
-    }
-    return Modifier;
-}
-*/
 
 simulated function ReplacePawns()
 {
@@ -243,6 +218,26 @@ simulated function ModifyPlayer(Pawn Other)
 simulated function ModifyPreLogin(string Options, string Address, out string ErrorMessage)
 {
     ReplacePawns();
+}
+
+function NotifyLogin(Controller NewPlayer)
+{
+    // ZMPlayerController(NewPlayer).ClientSetHUD(ZMHUDType);
+    if (bSwappedTeams)
+    {
+        ZMPlayerController(NewPlayer).ClientReset();
+    }
+
+    if(!ROGameInfo(WorldInfo.Game).bRoundHasBegun)
+    {
+        ZMPlayerController(NewPlayer).ClientShowRoundStartScreen(ROGameInfo(WorldInfo.Game).RoundStartScreenTime);
+    }
+
+    ZMPlayerController(NewPlayer).myROHUD.SetUpGameTypeHUD();
+    ZMPlayerController(NewPlayer).myROHUD.KillMessageWidget.Initialize(PlayerController(NewPlayer));
+    ZMPlayerController(NewPlayer).myROHUD.MessagesChatWidget.Initialize(PlayerController(NewPlayer));
+
+    // ZMHUD(ZMPlayerController(NewPlayer).MyROHUD).bInitialized = False;
 }
 
 DefaultProperties
